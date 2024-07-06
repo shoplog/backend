@@ -2,10 +2,10 @@ import compression from 'compression';
 import express, { json, Request } from 'express';
 import helmet from 'helmet';
 import pinoHttp from 'pino-http';
-import { CUSTOM_HEADERS } from 'src/common/constants/headers';
+import { CUSTOM_HEADERS } from 'src/constants/headers';
 import { logger } from 'src/initializers/logger';
 import { middleware as OpenApiValidatorMiddleware } from 'express-openapi-validator';
-import { errorHandlerMiddleware } from 'src/common/middlewares';
+import { errorHandlerMiddleware } from 'src/middlewares';
 import { NotFound } from 'express-openapi-validator/dist/openapi.validator';
 
 const OPEN_API_SPEC = 'data/openapi/v1.yml';

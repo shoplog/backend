@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ErrorRequestHandler } from 'express';
-import { ApplicationError, SupportedHttpStatusCode } from 'src/common/errors';
-import { Problem } from 'src/common/models';
+import { ApplicationError, SupportedHttpStatusCode } from 'src/errors';
+import { Problem } from 'src/models';
 import { HttpError } from 'express-openapi-validator/dist/framework/types';
 
 const titleMap = new Map<SupportedHttpStatusCode, string>([
@@ -15,7 +13,7 @@ const titleMap = new Map<SupportedHttpStatusCode, string>([
 ]);
 
 export function errorHandlerMiddleware(): ErrorRequestHandler {
-	return (err, req, res, next) => {
+	return (err, req, res, _next) => {
 		let problem: Problem = {
 			type: err.type ?? 'about:blank',
 			status: err.status ?? 500,
