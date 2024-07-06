@@ -38,7 +38,7 @@ export const setupApp = () => {
 	app.use(json());
 
 	app.get('/', (req, res) => {
-		res.status(200).send('Ok!');
+		res.status(200).end();
 	});
 
 	return app;

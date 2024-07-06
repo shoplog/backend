@@ -22,7 +22,7 @@ describe('GET /', () => {
 		const response = await supertest(app)
 			.get('/')
 			.expect(200)
-			.then((res) => res.headers[CUSTOM_HEADERS.RequestId]);
+			.then((res) => res.headers[CUSTOM_HEADERS.RequestId.toLowerCase()]);
 
 		// assert
 		expect(response).not.toBeNil();

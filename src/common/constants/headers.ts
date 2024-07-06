@@ -1,3 +1,3 @@
 export const CUSTOM_HEADERS = {
-	RequestId: 'x-request-id',
+	RequestId: 'X-Request-Id',
 };
