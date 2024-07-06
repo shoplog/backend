@@ -1,5 +1,5 @@
 import pino, { Logger, LoggerOptions } from 'pino';
-import { CONFIG } from 'src/config/env';
+import { CONFIG } from 'src/common/config/env';
 
 const createLogger = (options: LoggerOptions): Logger => {
 	if (!options.level) {

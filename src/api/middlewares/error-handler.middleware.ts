@@ -1,7 +1,7 @@
 import { ErrorRequestHandler } from 'express';
-import { ApplicationError, SupportedHttpStatusCode } from 'src/errors';
-import { Problem } from 'src/models';
-import { HttpError } from 'express-openapi-validator/dist/framework/types';
+import { HttpError, SupportedHttpStatusCode } from 'src/api/errors';
+import { Problem } from 'src/api/models';
+import { HttpError as OpenApiValidatorHttpError } from 'express-openapi-validator/dist/framework/types';
 
 const titleMap = new Map<SupportedHttpStatusCode, string>([
 	[400, 'Bad Request'],
@@ -22,7 +22,7 @@ export function errorHandlerMiddleware(): ErrorRequestHandler {
 			instance: req.protocol + '://' + req.get('host') + req.originalUrl,
 		};
 
-		if (err instanceof ApplicationError) {
+		if (err instanceof HttpError) {
 			const { code, status, message, data } = err;
 			const title = titleMap.get(status);
 
@@ -36,7 +36,7 @@ export function errorHandlerMiddleware(): ErrorRequestHandler {
 			};
 		}
 		// OpenAPI Validator Error
-		else if (err instanceof HttpError) {
+		else if (err instanceof OpenApiValidatorHttpError) {
 			const { status, message, errors } = err;
 			const mappedErrors = errors.map((error) => ({
 				name: error.path,

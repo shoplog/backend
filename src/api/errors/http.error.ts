@@ -4,7 +4,7 @@ export type SupportedHttpStatusCode = 400 | 401 | 403 | 404 | 422 | 500;
  * HttpError
  * @description Custom error class for http errors
  */
-export abstract class ApplicationError extends Error {
+export abstract class HttpError extends Error {
 	code: string;
 	status: SupportedHttpStatusCode;
 	data?: Record<string, unknown>;

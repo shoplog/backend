@@ -10,7 +10,7 @@
 		"format": "prettier --check .",
 		"format:fix": "prettier --write .",
 		"prepare": "husky",
-		"openapi": "openapi-typescript data/openapi/v1.yml -o src/types/openapi.d.ts --empty-objects-unknown && prettier --write src/types/openapi.d.ts"
+		"openapi": "openapi-typescript data/openapi/v1.yml -o src/api/types/openapi.d.ts --empty-objects-unknown && prettier --write src/api/types/openapi.d.ts"
 	},
 	"author": "",
 	"license": "MIT",
@@ -53,6 +53,7 @@
 		"nodemon": "3.1.4",
 		"openapi-typescript": "7.0.2",
 		"prettier": "3.3.2",
+		"prettier-plugin-organize-imports": "4.0.0",
 		"supertest": "7.0.0",
 		"typescript": "5.5.3",
 		"typescript-eslint": "7.15.0"

@@ -1,5 +1,5 @@
-import { CONFIG } from 'src/config/env';
-import { setupApp } from 'src/routes';
+import { setupApp } from 'src/api';
+import { CONFIG } from 'src/common/config/env';
 
 const port = CONFIG.server.port;
 const app = setupApp();
