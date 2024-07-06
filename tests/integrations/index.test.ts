@@ -46,4 +46,25 @@ describe('GET /', () => {
 		expect(headers['x-permitted-cross-domain-policies']).toBe('none');
 		expect(headers['x-powered-by']).toBeUndefined();
 	});
+
+	it('should return 404 Not Found', async () => {
+		// Act
+		const response = await supertest(app).get('/does-not-exist');
+
+		// Assert
+		expect(response.status).toBe(404);
+		expect(response.body).toMatchObject({
+			type: 'err_http',
+			status: 404,
+			title: 'Not Found',
+			detail: 'Not Found',
+			instance: `${response.request.url}`,
+			errors: [
+				{
+					name: '/does-not-exist',
+					reason: 'Not Found',
+				},
+			],
+		});
+	});
 });

@@ -1,9 +1,14 @@
 import compression from 'compression';
-import express, { json } from 'express';
+import express, { json, Request } from 'express';
 import helmet from 'helmet';
 import pinoHttp from 'pino-http';
 import { CUSTOM_HEADERS } from 'src/common/constants/headers';
 import { logger } from 'src/initializers/logger';
+import { middleware as OpenApiValidatorMiddleware } from 'express-openapi-validator';
+import { errorHandlerMiddleware } from 'src/common/middlewares';
+import { NotFound } from 'express-openapi-validator/dist/openapi.validator';
+
+const OPEN_API_SPEC = 'data/openapi/v1.yml';
 
 export const setupApp = () => {
 	const app = express();
@@ -40,6 +45,21 @@ export const setupApp = () => {
 	app.get('/', (req, res) => {
 		res.status(200).end();
 	});
+
+	app.use(
+		OpenApiValidatorMiddleware({
+			apiSpec: OPEN_API_SPEC,
+			validateApiSpec: false,
+			validateRequests: true,
+			validateResponses: true,
+		})
+	);
+
+	app.use((req: Request) => {
+		throw new NotFound({ path: req.url, message: 'Not Found' });
+	});
+
+	app.use(errorHandlerMiddleware());
 
 	return app;
 };
