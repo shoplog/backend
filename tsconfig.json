@@ -4,9 +4,6 @@
 		"module": "CommonJS",
 		"moduleResolution": "Node",
 		"baseUrl": ".",
-		"paths": {
-			"~/*": ["src/*"]
-		},
 		"allowJs": true,
 		"checkJs": true,
 		"noEmit": true,

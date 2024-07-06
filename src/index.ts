@@ -1,6 +1,7 @@
-import { setupApp } from '~/routes';
+import { CONFIG } from 'src/config/env';
+import { setupApp } from 'src/routes';
 
-const port = 3000;
+const port = CONFIG.server.port;
 const app = setupApp();
 
 app.listen(port, () => {

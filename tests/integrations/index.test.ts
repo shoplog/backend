@@ -1,5 +1,5 @@
+import { setupApp } from 'src/routes';
 import supertest from 'supertest';
-import { setupApp } from '~/routes';
 
 describe('Main app start', () => {
 	it('should start the app', async () => {
