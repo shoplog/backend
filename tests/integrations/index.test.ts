@@ -6,8 +6,8 @@ import { setupApp } from 'src/api';
 describe('GET /', () => {
 	let app: Express;
 
-	beforeAll(() => {
-		app = setupApp();
+	beforeAll(async () => {
+		app = await setupApp();
 	});
 
 	it('should return 200 OK', async () => {

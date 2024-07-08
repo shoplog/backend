@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from 'express';
 import { ParamsDictionary, Query } from 'express-serve-static-core';
+import { prisma } from 'src/common/initializers/db';
 
 export type ExpressMiddlewareFunction<
 	P = ParamsDictionary,
@@ -25,11 +26,14 @@ export function contextWrapMiddleware<
 ) => Promise<void> {
 	return async (req, res, next) => {
 		try {
-			await fn(req, res);
+			await prisma.$transaction(async (txn) => {
+				req.db = txn;
+				await fn(req, res);
 
-			if (!res.headersSent) {
-				next();
-			}
+				if (!res.headersSent) {
+					next();
+				}
+			});
 		} catch (error) {
 			next(error);
 		}

@@ -1,9 +1,22 @@
 import { setupApp } from 'src/api';
 import { CONFIG } from 'src/common/config/env';
+import { logger } from 'src/common/initializers/logger';
 
-const port = CONFIG.server.port;
-const app = setupApp();
+async function main() {
+	const port = CONFIG.server.port;
+	const app = await setupApp();
 
-app.listen(port, () => {
-	console.log(`Server is running at http://localhost:${port}`);
-});
+	app.listen(port, () => {
+		logger.info(`Server is listening on http://localhost:${port}`);
+	});
+}
+
+main()
+	.then(async () => {
+		logger.info('Server started');
+	})
+	.catch(async (e) => {
+		console.error(e);
+		logger.error(e, 'Server failed to start');
+		process.exit(1);
+	});

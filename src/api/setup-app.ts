@@ -7,10 +7,12 @@ import { logger } from 'src/common/initializers/logger';
 import { middleware as OpenApiValidatorMiddleware } from 'express-openapi-validator';
 import { errorHandlerMiddleware } from 'src/api/middlewares';
 import { NotFound } from 'express-openapi-validator/dist/openapi.validator';
+import { createUserRoutes } from 'src/api/routes/users.routes';
+import { contextWrapMiddleware } from 'src/api/middlewares/contex-wrap.middleware';
 
 const OPEN_API_SPEC = 'data/openapi/v1.yml';
 
-export const setupApp = () => {
+export const setupApp = async () => {
 	const app = express();
 
 	app.use(
@@ -45,6 +47,16 @@ export const setupApp = () => {
 	app.get('/', (req, res) => {
 		res.status(200).end();
 	});
+
+	// app.get(
+	// 	'/api/v1/users',
+	// 	contextWrapMiddleware(async (req, res) => {
+	// 		const users = await req.db.user.findMany();
+	//     res.json(users);
+	// 	})
+	// );
+
+	app.use('/api/v1', await createUserRoutes());
 
 	app.use(
 		OpenApiValidatorMiddleware({
