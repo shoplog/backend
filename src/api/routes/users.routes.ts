@@ -5,17 +5,9 @@ import { contextWrapMiddleware } from 'src/api/middlewares/contex-wrap.middlewar
 
 export async function createUserRoutes(): Promise<Router> {
 	const router = Router();
-	router.use(checkJwt);
-	router.get(
-		'/users',
-		contextWrapMiddleware(async (req, res) => {
-			const users = await req.db.user.findMany();
-			res.json(users);
-		})
-	);
-
 	router.get(
 		'/me',
+		checkJwt,
 		contextWrapMiddleware(async (req, res) => {
 			if (!req.auth) {
 				throw new UnauthorizedHttpError('Unauthorized');
