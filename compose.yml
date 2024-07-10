@@ -1,20 +1,30 @@
 services:
-  db:
+  postgres:
     image: postgres:latest
-    container_name: shoplog-db
+    container_name: shoplog-operational-db
     restart: always
     healthcheck:
-      test: ['CMD', 'pg_isready', '-q', '-d', 'postgres', '-U', '${DATABASE_USER}']
+      test: ['CMD', 'pg_isready', '-q', '-d', 'postgres', '-U', '${POSTGRES_USER}']
       timeout: 5s
       interval: 10s
       retries: 5
     environment:
-      POSTGRES_USER: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - '${DATABASE_PORT}:${DATABASE_PORT}'
+      - '${POSTGRES_PORT}:${POSTGRES_PORT}'
     volumes:
       - ./.docker/db:/var/lib/postgresql/data
+  sql-server:
+    image: mcr.microsoft.com/azure-sql-edge
+    container_name: shoplog-vpid-db
+    ports:
+      - '${SQL_SERVER_PORT}:${SQL_SERVER_PORT}'
+    environment:
+      ACCEPT_EULA: 1
+      MSSQL_USER: ${SQL_SERVER_USER}
+      MSSQL_PASSWORD: ${SQL_SERVER_PASSWORD}
+      MSSQL_PID: Developer
   # redis:
   #   image: redis:latest
   #   restart: always

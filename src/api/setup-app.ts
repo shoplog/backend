@@ -8,7 +8,6 @@ import { middleware as OpenApiValidatorMiddleware } from 'express-openapi-valida
 import { errorHandlerMiddleware } from 'src/api/middlewares';
 import { NotFound } from 'express-openapi-validator/dist/openapi.validator';
 import { createUserRoutes } from 'src/api/routes/users.routes';
-import { contextWrapMiddleware } from 'src/api/middlewares/contex-wrap.middleware';
 
 const OPEN_API_SPEC = 'data/openapi/v1.yml';
 

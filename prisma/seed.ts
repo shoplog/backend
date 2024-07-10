@@ -4,16 +4,14 @@ const prisma = new PrismaClient();
 
 async function main() {
 	const email = 'test@shoplog.com';
-	const auth0Id = 'auth0|6670f1c394d1babea1593c36';
-	const refId = 'clyc8uuv10000k422c64lpzfh';
+	const id = 'auth0|6670f1c394d1babea1593c36';
 
 	await prisma.user.upsert({
 		where: { email },
 		update: {},
 		create: {
-			auth0Id,
+			id,
 			email,
-			refId,
 		},
 	});
 }
