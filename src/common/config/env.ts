@@ -9,6 +9,8 @@ const schema = z.object({
 	HTTP_PORT: z.string().min(1).default('8080').transform(Number),
 	LOG_LEVEL: z.string().min(1).default('debug'),
 	LOG_PRINT_PRETTY: z.string().min(1).default('true').transform(Boolean),
+	AUTH0_ISSUER: z.string().min(1),
+	AUTH0_AUDIENCE: z.string().min(1),
 });
 
 const { success, error, data } = schema.safeParse(process.env);
@@ -18,6 +20,10 @@ if (!success) {
 }
 
 const CONFIG = {
+	auth0: {
+		issuerBaseURL: data.AUTH0_ISSUER,
+		audience: data.AUTH0_AUDIENCE,
+	},
 	environment: data.NODE_ENV,
 	logging: {
 		level: data.LOG_LEVEL,

@@ -2,6 +2,7 @@ import { ErrorRequestHandler } from 'express';
 import { HttpError, SupportedHttpStatusCode } from 'src/api/errors';
 import { Problem } from 'src/api/models';
 import { HttpError as OpenApiValidatorHttpError } from 'express-openapi-validator/dist/framework/types';
+import { UnauthorizedError } from 'express-oauth2-jwt-bearer';
 
 const titleMap = new Map<SupportedHttpStatusCode, string>([
 	[400, 'Bad Request'],
@@ -49,6 +50,17 @@ export function errorHandlerMiddleware(): ErrorRequestHandler {
 				status,
 				detail: message,
 				...{ errors: mappedErrors },
+			};
+		}
+		// auth0
+		else if (err instanceof UnauthorizedError) {
+			const { status, message, stack } = err;
+			problem = {
+				...problem,
+				type: 'err_auth',
+				title: message,
+				status,
+				detail: stack,
 			};
 		}
 

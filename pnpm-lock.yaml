@@ -20,6 +20,9 @@ importers:
       express:
         specifier: 4.19.2
         version: 4.19.2
+      express-oauth2-jwt-bearer:
+        specifier: 1.6.0
+        version: 1.6.0
       express-openapi-validator:
         specifier: 5.2.0
         version: 5.2.0(express@4.19.2)
@@ -1505,6 +1508,10 @@ packages:
     resolution: {integrity: sha512-2Zks0hf1VLFYI1kbh0I5jP3KHHyCHpkfyHBzsSXRFgl/Bg9mWYfMW8oD+PdMPlEwy5HNsR9JutYy6pMeOh61nw==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
 
+  express-oauth2-jwt-bearer@1.6.0:
+    resolution: {integrity: sha512-HXnez7vocYlOqlfF3ozPcf/WE3zxT7zfUNfeg5FHJnvNwhBYlNXiPOvuCtBalis8xcigvwtInzEKhBuH87+9ug==}
+    engines: {node: ^12.19.0 || ^14.15.0 || ^16.13.0 || ^18.12.0 || ^20.2.0}
+
   express-openapi-validator@5.2.0:
     resolution: {integrity: sha512-7YMLsnC9MfeCa/nb2YnAxxRKGzkZ6GucjCcZc+IZU6AHq0TZ3vLOGhXT+uqMV3QiCJWy0XdzQtrUBwGD8eBEaQ==}
     peerDependencies:
@@ -2062,6 +2069,9 @@ packages:
   jiti@1.21.6:
     resolution: {integrity: sha512-2yTgeWTWzMWkHu6Jp9NKgePDaYHbntiwvYuuJLbbN9vl7DC9DvXKOB2BC3ZZ92D3cvV/aflH0osDfwpHepQ53w==}
     hasBin: true
+
+  jose@4.15.9:
+    resolution: {integrity: sha512-1vUQX+IdDMVPj4k8kOxgUqlcK518yluMuGZwqlr44FS1ppZB/5GWh4rZG89erpOBOJjU/OBsnCVFfapsRz6nEA==}
 
   joycon@3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
@@ -4807,6 +4817,10 @@ snapshots:
       jest-message-util: 29.7.0
       jest-util: 29.7.0
 
+  express-oauth2-jwt-bearer@1.6.0:
+    dependencies:
+      jose: 4.15.9
+
   express-openapi-validator@5.2.0(express@4.19.2):
     dependencies:
       '@apidevtools/json-schema-ref-parser': 11.6.4
@@ -5565,6 +5579,8 @@ snapshots:
       - ts-node
 
   jiti@1.21.6: {}
+
+  jose@4.15.9: {}
 
   joycon@3.1.1: {}
 
