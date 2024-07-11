@@ -14,17 +14,24 @@ services:
     ports:
       - '${POSTGRES_PORT}:${POSTGRES_PORT}'
     volumes:
-      - ./.docker/db:/var/lib/postgresql/data
-  sql-server:
-    image: mcr.microsoft.com/azure-sql-edge
-    container_name: shoplog-vpid-db
+      - ./.docker/postgres:/var/lib/postgresql/data
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: shoplog-vpic-db
     ports:
       - '${SQL_SERVER_PORT}:${SQL_SERVER_PORT}'
     environment:
-      ACCEPT_EULA: 1
-      MSSQL_USER: ${SQL_SERVER_USER}
-      MSSQL_PASSWORD: ${SQL_SERVER_PASSWORD}
-      MSSQL_PID: Developer
+      ACCEPT_EULA: Y
+      MSSQL_SA_PASSWORD: ${SQL_SERVER_PASSWORD}
+    healthcheck:
+      test: ['CMD', 'sqlcmd', '-U', '${SQL_SERVER_USER}', '-P', '${SQL_SERVER_PASSWORD}', '-Q', 'SELECT 1']
+      interval: 10s
+      retries: 5
+    volumes:
+      - ./.docker/mssql:/var/opt/mssql
+      - ./data/mssql/backups:/var/opt/mssql/backups
+      - ./data/mssql/scripts:/var/opt/mssql/scripts
+
   # redis:
   #   image: redis:latest
   #   restart: always
