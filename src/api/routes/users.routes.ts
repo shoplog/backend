@@ -22,21 +22,24 @@ export async function createUserRoutes(): Promise<Router> {
 	router.get(
 		'/vin',
 		checkJwt,
-		contextWrapMiddleware(async (req, res) => {
-			if (!req.auth) {
-				throw new UnauthorizedHttpError('Unauthorized');
-			}
-			// 5TEWN72N82Z891171 2002 toyota tacoma
-			const { rows } = await sql`EXEC spVinDecode '2HKRW2H55JH103484'`.execute(VehicleDb);
-			const data = rows as VinDecodeItem[];
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			const obj = data.reduce(function (acc: any, cur) {
-				acc[cur.Code] = cur.Value;
-				return acc;
-			}, {});
+		contextWrapMiddleware(
+			async (req, res) => {
+				if (!req.auth) {
+					throw new UnauthorizedHttpError('Unauthorized');
+				}
+				// 5TEWN72N82Z891171 2002 toyota tacoma
+				const { rows } = await sql`EXEC spVinDecode '2HKRW2H55JH103484'`.execute(VehicleDb);
+				const data = rows as VinDecodeItem[];
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				const obj = data.reduce(function (acc: any, cur) {
+					acc[cur.Code] = cur.Value;
+					return acc;
+				}, {});
 
-			res.json(obj);
-		})
+				res.json(obj);
+			},
+			{ disableTransaction: true }
+		)
 	);
 
 	return router;
