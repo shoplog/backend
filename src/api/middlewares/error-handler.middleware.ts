@@ -3,6 +3,7 @@ import { HttpError, SupportedHttpStatusCode } from 'src/api/errors';
 import { Problem } from 'src/api/models';
 import { HttpError as OpenApiValidatorHttpError } from 'express-openapi-validator/dist/framework/types';
 import { UnauthorizedError } from 'express-oauth2-jwt-bearer';
+import { logger } from 'src/common/initializers/logger';
 
 const titleMap = new Map<SupportedHttpStatusCode, string>([
 	[400, 'Bad Request'],
@@ -15,6 +16,7 @@ const titleMap = new Map<SupportedHttpStatusCode, string>([
 
 export function errorHandlerMiddleware(): ErrorRequestHandler {
 	return (err, req, res, _next) => {
+		logger.error(err);
 		let problem: Problem = {
 			type: err.type ?? 'about:blank',
 			status: err.status ?? 500,
