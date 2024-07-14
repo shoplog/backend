@@ -26,7 +26,41 @@ paths:
                     example: up
         '500':
           $ref: '#/components/responses/500'
+  /vehicles/search/by-vin:
+    get:
+      summary: Search for a vehicle by VIN
+      operationId: vehiclesSearchByVin
+      parameters:
+        - $ref: '#/components/parameters/vin'
+      responses:
+        '200':
+          description: Vehicle found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VehiclesSearchByVinResult'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
 components:
+  parameters:
+    vin:
+      name: vin
+      in: query
+      description: Vehicle Identification Number
+      required: true
+      schema:
+        type: string
+      example: 5TEWN72N82Z891171
   responses:
     '400':
       content:
@@ -65,6 +99,42 @@ components:
             $ref: '#/components/schemas/Problem'
       description: Request was not processed due to an internal server error
   schemas:
+    VehiclesSearchByVinResult:
+      description: 'A vehicle search result'
+      type: object
+      properties:
+        vin:
+          type: string
+          description: Vehicle Identification Number
+          example: 5TEWN72N82Z891171
+        makeId:
+          type: integer
+          format: int32
+          description: Vehicle make ID
+          example: 1
+        make:
+          type: string
+          description: Vehicle make
+          example: Toyota
+        modelId:
+          type: integer
+          format: int32
+          description: Vehicle model ID
+          example: 1
+        model:
+          type: string
+          description: Vehicle model
+          example: Tacoma
+        year:
+          type: integer
+          format: int32
+          description: Vehicle year
+          example: 2002
+        attributes:
+          type: object
+          description: Vehicle attributes
+          additionalProperties:
+            type: string
     Problem:
       description: A Problem Details object (RFC 9457)
       type: object

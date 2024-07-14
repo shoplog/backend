@@ -4,7 +4,7 @@ import { z } from 'zod';
 dotenv.config();
 
 const schema = z.object({
-	NODE_ENV: z.string().min(1).default('development'),
+	NODE_ENV: z.union([z.literal('development'), z.literal('test'), z.literal('production')]),
 	TZ: z.string().min(1).default('UTC'),
 	HTTP_PORT: z.string().min(1).default('8080').transform(Number),
 	LOG_LEVEL: z.string().min(1).default('debug'),

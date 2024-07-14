@@ -8,6 +8,7 @@ import { middleware as OpenApiValidatorMiddleware } from 'express-openapi-valida
 import { errorHandlerMiddleware } from 'src/api/middlewares';
 import { NotFound } from 'express-openapi-validator/dist/openapi.validator';
 import { createUserRoutes } from 'src/api/routes/users.routes';
+import { createVehicleSearchRoutes } from 'src/api/routes/vehicle-search.routes';
 
 const OPEN_API_SPEC = 'data/openapi/v1.yml';
 
@@ -56,6 +57,7 @@ export const setupApp = async () => {
 	// );
 
 	app.use('/api/v1', await createUserRoutes());
+	app.use('/api/v1/vehicles/search', await createVehicleSearchRoutes());
 
 	app.use(
 		OpenApiValidatorMiddleware({

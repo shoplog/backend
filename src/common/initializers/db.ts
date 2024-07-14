@@ -5,6 +5,7 @@ import * as tarn from 'tarn';
 import { Kysely, MssqlDialect } from 'kysely';
 import { vPICList_Lite1 } from 'src/data/vpic/db';
 import { CONFIG } from 'src/common/config/env';
+import { logger } from 'src/common/initializers/logger';
 
 const dialect = new MssqlDialect({
 	tarn: {
@@ -12,6 +13,9 @@ const dialect = new MssqlDialect({
 		options: {
 			min: 0,
 			max: 10,
+			log: (message) => {
+				logger.debug(message);
+			},
 		},
 	},
 	tedious: {
@@ -42,5 +46,7 @@ const dialect = new MssqlDialect({
 export const VehicleDb = new Kysely<vPICList_Lite1>({
 	dialect,
 });
+
+export type VehicleDb = Kysely<vPICList_Lite1>;
 
 export const OperationalDb = new PrismaClient();
