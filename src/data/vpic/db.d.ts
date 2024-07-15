@@ -139,9 +139,9 @@ export interface DaytimeRunningLight {
 export interface DecodingOutput {
 	AddedOn: Generated<Date>;
 	AttributeId: string | null;
-	Code: string | null;
+	Code: string;
 	CreatedOn: Date | null;
-	DataType: string | null;
+	DataType: string;
 	Decode: string | null;
 	ElementId: number | null;
 	GroupName: string | null;

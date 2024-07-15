@@ -76,6 +76,11 @@ export interface components {
 			 */
 			vin?: string;
 			/**
+			 * @description Suggested Vehicle Identification Number
+			 * @example 5TEWN72N82Z891171
+			 */
+			suggestedVin?: string;
+			/**
 			 * Format: int32
 			 * @description Vehicle make ID
 			 * @example 1
@@ -105,7 +110,7 @@ export interface components {
 			year?: number;
 			/** @description Vehicle attributes */
 			attributes?: {
-				[key: string]: string | undefined;
+				[key: string]: (string | number) | undefined;
 			};
 		};
 		/** @description A Problem Details object (RFC 9457) */
@@ -249,7 +254,11 @@ export interface operations {
 					'application/json': components['schemas']['VehiclesSearchByVinResult'];
 				};
 			};
+			400: components['responses']['400'];
+			401: components['responses']['401'];
+			403: components['responses']['403'];
 			404: components['responses']['404'];
+			422: components['responses']['422'];
 			500: components['responses']['500'];
 		};
 	};

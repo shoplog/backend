@@ -107,6 +107,10 @@ components:
           type: string
           description: Vehicle Identification Number
           example: 5TEWN72N82Z891171
+        suggestedVin:
+          type: string
+          description: Suggested Vehicle Identification Number
+          example: 5TEWN72N82Z891171
         makeId:
           type: integer
           format: int32
@@ -134,7 +138,9 @@ components:
           type: object
           description: Vehicle attributes
           additionalProperties:
-            type: string
+            oneOf:
+              - type: string
+              - type: integer
     Problem:
       description: A Problem Details object (RFC 9457)
       type: object
