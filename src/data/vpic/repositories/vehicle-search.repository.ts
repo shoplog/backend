@@ -259,23 +259,23 @@ export class VehicleSearchRepository {
 	async searchByVin(vin: string): Promise<VehicleElements> {
 		const { rows } = await sql`EXEC spVinDecode ${vin}`.execute(this.db);
 		const data = rows as DecodingOutput[];
-		const result: VehicleElements = data.reduce(function (
-			acc: { [code: string]: string | number | null | { Id: number; Value: string } },
-			cur: DecodingOutput
-		) {
-			const key = cur.Code as keyof VehicleElements;
-			if (cur.DataType == 'string') {
-				acc[key] = cur.Value;
-			} else if (cur.DataType == 'int' || cur.DataType == 'decimal') {
-				acc[key] = cur.Value ? Number(cur.Value) : null;
-			} else {
-				const keyId = `${cur.Code}Id` as keyof VehicleElements;
-				acc[key] = cur.Value;
-				acc[keyId] = cur.AttributeId ? Number(cur.AttributeId) : null;
-			}
+		const result: VehicleElements = data.reduce(
+			(acc: { [code: string]: string | number | null }, cur: DecodingOutput) => {
+				const key = cur.Code as keyof VehicleElements;
+				if (cur.DataType == 'string') {
+					acc[key] = cur.Value;
+				} else if (cur.DataType == 'int' || cur.DataType == 'decimal') {
+					acc[key] = cur.Value ? Number(cur.Value) : null;
+				} else {
+					const keyId = `${cur.Code}Id` as keyof VehicleElements;
+					acc[key] = cur.Value;
+					acc[keyId] = cur.AttributeId ? Number(cur.AttributeId) : null;
+				}
 
-			return acc;
-		}, {});
+				return acc;
+			},
+			{}
+		);
 
 		return result;
 	}
