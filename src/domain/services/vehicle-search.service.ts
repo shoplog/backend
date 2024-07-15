@@ -12,6 +12,7 @@ export class VehicleSearchService {
 
 		if (result.ErrorCode == '0') {
 			result.ErrorText = null;
+			result.ErrorCode = null;
 		} else {
 			if (result.ErrorText) {
 				result.ErrorText = result.ErrorText.split('-')[1].trim();
