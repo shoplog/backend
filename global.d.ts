@@ -1,5 +1,5 @@
-import 'jest-extended';
 import { PrismaClient } from '@prisma/client';
+import 'jest-extended';
 
 declare global {
 	namespace Express {

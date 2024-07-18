@@ -1,6 +1,5 @@
 // Fix for exclusiveMinimum and exclusiveMaximum not being boolean
 // https://github.com/tiangolo/fastapi/issues/240
-
 import { Kind, SchemaOptions, TSchema } from '@sinclair/typebox';
 
 export interface FixedIntegerOptions extends SchemaOptions {

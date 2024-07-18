@@ -1,11 +1,14 @@
 import js from '@eslint/js';
-import ts from 'typescript-eslint';
 import prettier from 'eslint-config-prettier';
+import importX from 'eslint-plugin-import-x';
 import globals from 'globals';
+import ts from 'typescript-eslint';
 
 export default [
 	js.configs.recommended,
 	...ts.configs.recommended,
+	importX.configs.typescript,
+	{ plugins: { 'import-x': importX } },
 	{
 		rules: {
 			'@typescript-eslint/no-unused-vars': [

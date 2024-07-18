@@ -1,15 +1,15 @@
+import { apiReference } from '@scalar/express-api-reference';
 import compression from 'compression';
 import express, { Request, json } from 'express';
+import { middleware as OpenApiValidatorMiddleware } from 'express-openapi-validator';
+import { NotFound } from 'express-openapi-validator/dist/openapi.validator';
 import helmet from 'helmet';
 import pinoHttp from 'pino-http';
 import { CUSTOM_HEADERS } from 'src/api/constants/headers';
-import { logger } from 'src/common/initializers/logger';
 import { errorHandlerMiddleware } from 'src/api/middlewares';
-import { NotFound } from 'express-openapi-validator/dist/openapi.validator';
 import { createUserRoutes } from 'src/api/routes/users.routes';
 import { apiSpec } from 'src/api/schemas/openapi.schema';
-import { middleware as OpenApiValidatorMiddleware } from 'express-openapi-validator';
-import { apiReference } from '@scalar/express-api-reference';
+import { logger } from 'src/common/initializers/logger';
 
 export const setupApp = async () => {
 	const app = express();

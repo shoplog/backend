@@ -1,7 +1,7 @@
-import dotenv from 'dotenv';
 import { Type } from '@sinclair/typebox';
-import { StringAsBoolean, StringAsNumber } from 'src/common/types/common';
 import { Value } from '@sinclair/typebox/value';
+import dotenv from 'dotenv';
+import { StringAsBoolean, StringAsNumber } from 'src/common/types/common';
 
 dotenv.config();
 

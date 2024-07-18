@@ -1,7 +1,7 @@
 import { Express } from 'express';
-import supertest from 'supertest';
-import { CUSTOM_HEADERS } from 'src/api/constants/headers';
 import { setupApp } from 'src/api';
+import { CUSTOM_HEADERS } from 'src/api/constants/headers';
+import supertest from 'supertest';
 
 describe('GET /', () => {
 	let app: Express;
