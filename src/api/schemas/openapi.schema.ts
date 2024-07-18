@@ -1,6 +1,24 @@
 import { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types';
-import { ProblemSchema, ValidationProblemSchema } from 'src/api/schemas/problem.schema';
+import { ProblemSchema, ValidationErrorSchema, ValidationProblemSchema } from 'src/api/schemas/problem.schema';
+import {
+	BadRequestResponse,
+	createSuccessJsonResponse,
+	ForbiddenResponse,
+	InternalServerErrorResponse,
+	NotFoundResponse,
+	UnauthorizedResponse,
+	UnprocessableEntityResponse,
+} from 'src/api/schemas/response.schema';
 import { CONFIG } from 'src/common/config/env';
+
+const defaultResponses: OpenAPIV3.ResponsesObject = {
+	400: BadRequestResponse,
+	401: UnauthorizedResponse,
+	403: ForbiddenResponse,
+	404: NotFoundResponse,
+	422: UnprocessableEntityResponse,
+	500: InternalServerErrorResponse,
+};
 
 export const apiSpec: OpenAPIV3.Document = {
 	openapi: '3.0.3',
@@ -25,66 +43,25 @@ export const apiSpec: OpenAPIV3.Document = {
 				summary: 'Health Check',
 				description: 'Health check endpoint',
 				responses: {
-					200: {
-						description: 'Health check succeeded',
-					},
-					400: {
-						$ref: '#/components/responses/400',
-					},
+					200: createSuccessJsonResponse('Health check successful'),
+					...defaultResponses,
 				},
 			},
 		},
 	},
 	components: {
+		schemas: {
+			Problem: ProblemSchema,
+			ValidationError: ValidationErrorSchema,
+			ValidationProblem: ValidationProblemSchema,
+		},
 		responses: {
-			400: {
-				description: 'Request cannot be processed due to malformed request syntax',
-				content: {
-					'application/problem+json': {
-						schema: ValidationProblemSchema,
-					},
-				},
-			},
-			401: {
-				description: 'Request was not processed due to authentication failure',
-				content: {
-					'application/problem+json': {
-						schema: ProblemSchema,
-					},
-				},
-			},
-			403: {
-				description: 'Request was not processed due to insufficient permissions',
-				content: {
-					'application/problem+json': {
-						schema: ProblemSchema,
-					},
-				},
-			},
-			404: {
-				description: 'Request was not processed due to resource not found',
-				content: {
-					'application/problem+json': {
-						schema: ProblemSchema,
-					},
-				},
-			},
-			422: {
-				description: 'Request was formed correctly but errors ocurred during processing',
-				content: {
-					'application/problem+json': {
-						schema: ProblemSchema,
-					},
-				},
-			},
-			500: {
-				description: 'Request was not processed due to an internal server error',
-				content: {
-					'application/problem+json': {
-						schema: ProblemSchema,
-					},
-				},
-			},
+			400: BadRequestResponse,
+			401: UnauthorizedResponse,
+			403: ForbiddenResponse,
+			404: NotFoundResponse,
+			422: UnprocessableEntityResponse,
+			500: InternalServerErrorResponse,
 		},
 	},
 };

@@ -32,6 +32,7 @@ const ProblemSchema = Type.Object(
 	},
 	{
 		description: 'A Problem Details object (RFC 9457)',
+		additionalProperties: Type.Record(Type.String(), Type.Any()),
 	}
 );
 
@@ -45,34 +46,35 @@ const ValidationErrorSchema = Type.Object(
 	}
 );
 
-const ValidationProblemSchema = Type.Intersect([
-	ProblemSchema,
-	Type.Object(
-		{ errors: Type.Array(ValidationErrorSchema, { description: 'A list of validation errors' }) },
-		{
-			description: 'A Problem Details object (RFC 9457) which includes validation errors',
-			examples: [
-				{
-					type: 'about:blank',
-					title: 'Validation Error',
-					status: 400,
-					detail: 'One or more validation errors occurred',
-					instance: 'https://example.com/api/v1/resource/123',
-					errors: [
-						{
-							name: 'name',
-							reason: 'Name is required',
-						},
-						{
-							name: 'email',
-							reason: 'Email is invalid',
-						},
-					],
-				},
-			],
-		}
-	),
-]);
+const ValidationProblemSchema = Type.Composite(
+	[
+		ProblemSchema,
+		Type.Object({ errors: Type.Array(ValidationErrorSchema, { description: 'A list of validation errors' }) }),
+	],
+	{
+		description: 'A Problem Details object (RFC 9457) which includes validation errors',
+		additionalProperties: Type.Record(Type.String(), Type.Any()),
+		examples: [
+			{
+				type: 'about:blank',
+				title: 'Validation Error',
+				status: 400,
+				detail: 'One or more validation errors occurred',
+				instance: 'https://example.com/api/v1/resource/123',
+				errors: [
+					{
+						name: 'name',
+						reason: 'Name is required',
+					},
+					{
+						name: 'email',
+						reason: 'Email is invalid',
+					},
+				],
+			},
+		],
+	}
+);
 
 type Problem = Static<typeof ProblemSchema>;
 type ValidationError = Static<typeof ValidationErrorSchema>;

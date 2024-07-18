@@ -7,9 +7,9 @@ import { logger } from 'src/common/initializers/logger';
 import { errorHandlerMiddleware } from 'src/api/middlewares';
 import { NotFound } from 'express-openapi-validator/dist/openapi.validator';
 import { createUserRoutes } from 'src/api/routes/users.routes';
-import * as swaggerUi from 'swagger-ui-express';
 import { apiSpec } from 'src/api/schemas/openapi.schema';
 import { middleware as OpenApiValidatorMiddleware } from 'express-openapi-validator';
+import { apiReference } from '@scalar/express-api-reference';
 
 export const setupApp = async () => {
 	const app = express();
@@ -26,7 +26,16 @@ export const setupApp = async () => {
 
 	app.use(compression());
 
-	app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiSpec, {}));
+	// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiSpec, {}));
+
+	app.use(
+		'/api-docs',
+		apiReference({
+			spec: {
+				content: apiSpec,
+			},
+		})
+	);
 
 	// Generate request id that will correlate all logs for a single request.
 	app.use((req, res, next) => {
