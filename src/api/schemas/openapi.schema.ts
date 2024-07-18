@@ -2,12 +2,12 @@ import { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types';
 import { ProblemSchema, ValidationErrorSchema, ValidationProblemSchema } from 'src/api/schemas/problem.schema';
 import {
 	BadRequestResponse,
-	createSuccessJsonResponse,
 	ForbiddenResponse,
 	InternalServerErrorResponse,
 	NotFoundResponse,
 	UnauthorizedResponse,
 	UnprocessableEntityResponse,
+	createSuccessJsonResponse,
 } from 'src/api/schemas/response.schema';
 import { CONFIG } from 'src/common/config/env';
 

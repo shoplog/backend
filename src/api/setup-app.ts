@@ -1,5 +1,5 @@
 import compression from 'compression';
-import express, { json, Request } from 'express';
+import express, { Request, json } from 'express';
 import helmet from 'helmet';
 import pinoHttp from 'pino-http';
 import { CUSTOM_HEADERS } from 'src/api/constants/headers';
