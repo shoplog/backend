@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from 'express';
 import { ParamsDictionary, Query } from 'express-serve-static-core';
-import { OperationalDb } from 'src/common/initializers/db';
 
 export type ExpressMiddlewareFunction<
 	P = ParamsDictionary,
@@ -18,8 +17,7 @@ export function contextWrapMiddleware<
 	ReqQuery = Query,
 	Locals extends Record<string, any> = Record<string, any>,
 >(
-	fn: ExpressMiddlewareFunction<P, ResBody, ReqBody, ReqQuery, Locals>,
-	opts?: { disableTransaction?: boolean }
+	fn: ExpressMiddlewareFunction<P, ResBody, ReqBody, ReqQuery, Locals>
 ): (
 	req: Request<P, ResBody, ReqBody, ReqQuery, Locals>,
 	res: Response<ResBody, Locals>,
@@ -27,23 +25,7 @@ export function contextWrapMiddleware<
 ) => Promise<void> {
 	return async (req, res, next) => {
 		try {
-			if (opts?.disableTransaction) {
-				req.db = OperationalDb;
-				await fn(req, res);
-
-				if (!res.headersSent) {
-					next();
-				}
-			} else {
-				await OperationalDb.$transaction(async (txn) => {
-					req.db = txn;
-					await fn(req, res);
-
-					if (!res.headersSent) {
-						next();
-					}
-				});
-			}
+			await fn(req, res);
 		} catch (error) {
 			next(error);
 		}

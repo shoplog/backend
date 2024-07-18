@@ -1,49 +1,61 @@
 import dotenv from 'dotenv';
-import { z } from 'zod';
+import { Type } from '@sinclair/typebox';
+import { StringAsBoolean, StringAsNumber } from 'src/common/types/common';
+import { Value } from '@sinclair/typebox/value';
 
 dotenv.config();
 
-const schema = z.object({
-	NODE_ENV: z.union([z.literal('development'), z.literal('test'), z.literal('production')]),
-	TZ: z.string().min(1).default('UTC'),
-	HTTP_PORT: z.string().min(1).default('8080').transform(Number),
-	LOG_LEVEL: z.string().min(1).default('debug'),
-	LOG_PRINT_PRETTY: z.string().min(1).default('true').transform(Boolean),
-	AUTH0_ISSUER: z.string().min(1),
-	AUTH0_AUDIENCE: z.string().min(1),
-	SQL_SERVER_HOST: z.string().min(1),
-	SQL_SERVER_NAME: z.string().min(1),
-	SQL_SERVER_PORT: z.string().min(1),
-	SQL_SERVER_USER: z.string().min(1),
-	SQL_SERVER_PASSWORD: z.string().min(1),
+const schema = Type.Object({
+	NODE_ENV: Type.Union([Type.Literal('development'), Type.Literal('test'), Type.Literal('production')]),
+	TZ: Type.String({ minLength: 1, default: 'UTC' }),
+	HTTP_PORT: StringAsNumber({ minLength: 1, default: '8080' }),
+	LOG_LEVEL: Type.Union([
+		Type.Literal('silent'),
+		Type.Literal('trace'),
+		Type.Literal('debug'),
+		Type.Literal('info'),
+		Type.Literal('warn'),
+		Type.Literal('error'),
+		Type.Literal('fatal'),
+	]),
+	LOG_PRINT_PRETTY: StringAsBoolean({ default: 'true' }),
+	AUTH0_ISSUER: Type.String({ minLength: 1 }),
+	AUTH0_AUDIENCE: Type.String({ minLength: 1 }),
+	DB_HOST: Type.String({ minLength: 1 }),
+	DB_NAME: Type.String({ minLength: 1 }),
+	DB_PORT: Type.String({ minLength: 1 }),
+	DB_USERNAME: Type.String({ minLength: 1 }),
+	DB_PASSWORD: Type.String({ minLength: 1 }),
+	DB_URL: Type.String({ minLength: 1 }),
 });
 
-const { success, error, data } = schema.safeParse(process.env);
-
-if (!success) {
-	throw error;
+if (!Value.Check(schema, process.env)) {
+	throw new Error('Invalid environment variables');
 }
+
+const env = Value.Decode(schema, process.env);
 
 const CONFIG = {
 	auth0: {
-		issuerBaseURL: data.AUTH0_ISSUER,
-		audience: data.AUTH0_AUDIENCE,
+		issuerBaseURL: env.AUTH0_ISSUER,
+		audience: env.AUTH0_AUDIENCE,
 	},
 	mssql: {
-		host: data.SQL_SERVER_HOST,
-		database: data.SQL_SERVER_NAME,
-		port: data.SQL_SERVER_PORT,
-		user: data.SQL_SERVER_USER,
-		password: data.SQL_SERVER_PASSWORD,
+		host: env.DB_HOST,
+		database: env.DB_NAME,
+		port: env.DB_PORT,
+		user: env.DB_USERNAME,
+		password: env.DB_PASSWORD,
+		url: env.DB_URL,
 	},
-	environment: data.NODE_ENV,
+	environment: env.NODE_ENV,
 	logging: {
-		level: data.LOG_LEVEL,
-		printPretty: data.LOG_PRINT_PRETTY,
+		level: env.LOG_LEVEL,
+		printPretty: env.LOG_PRINT_PRETTY,
 	},
 	server: {
-		timezone: data.TZ,
-		port: data.HTTP_PORT,
+		timezone: env.TZ,
+		port: env.HTTP_PORT,
 	},
 };
 

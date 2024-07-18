@@ -4,13 +4,9 @@ import helmet from 'helmet';
 import pinoHttp from 'pino-http';
 import { CUSTOM_HEADERS } from 'src/api/constants/headers';
 import { logger } from 'src/common/initializers/logger';
-import { middleware as OpenApiValidatorMiddleware } from 'express-openapi-validator';
 import { errorHandlerMiddleware } from 'src/api/middlewares';
 import { NotFound } from 'express-openapi-validator/dist/openapi.validator';
 import { createUserRoutes } from 'src/api/routes/users.routes';
-import { createVehicleSearchRoutes } from 'src/api/routes/vehicle-search.routes';
-
-const OPEN_API_SPEC = 'data/openapi/v1.yml';
 
 export const setupApp = async () => {
 	const app = express();
@@ -48,25 +44,16 @@ export const setupApp = async () => {
 		res.status(200).end();
 	});
 
-	// app.get(
-	// 	'/api/v1/users',
-	// 	contextWrapMiddleware(async (req, res) => {
-	// 		const users = await req.db.user.findMany();
-	//     res.json(users);
+	app.use('/api/v1', await createUserRoutes());
+
+	// app.use(
+	// 	OpenApiValidatorMiddleware({
+	// 		apiSpec: OPEN_API_SPEC,
+	// 		validateApiSpec: false,
+	// 		validateRequests: true,
+	// 		validateResponses: true,
 	// 	})
 	// );
-
-	app.use('/api/v1', await createUserRoutes());
-	app.use('/api/v1/vehicles/search', await createVehicleSearchRoutes());
-
-	app.use(
-		OpenApiValidatorMiddleware({
-			apiSpec: OPEN_API_SPEC,
-			validateApiSpec: false,
-			validateRequests: true,
-			validateResponses: true,
-		})
-	);
 
 	app.use((req: Request) => {
 		throw new NotFound({ path: req.url, message: 'Not Found' });
