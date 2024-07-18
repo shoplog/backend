@@ -2,10 +2,9 @@ import { ErrorRequestHandler } from 'express';
 import { UnauthorizedError } from 'express-oauth2-jwt-bearer';
 import { HttpError as OpenApiValidatorHttpError } from 'express-openapi-validator/dist/framework/types';
 import { STATUS_CODES } from 'http';
-import { Errors } from 'src/api/errors/error-map';
 import { Problem } from 'src/api/schemas/problem.schema';
 import { CONFIG } from 'src/common/config/env';
-import { CodedError } from 'src/common/errors';
+import { StandardError } from 'src/common/errors/standard.error';
 import { logger } from 'src/common/initializers/logger';
 
 export function errorHandlerMiddleware(): ErrorRequestHandler {
@@ -22,10 +21,10 @@ export function errorHandlerMiddleware(): ErrorRequestHandler {
 		}
 
 		// Custom errors
-		if (err instanceof CodedError) {
+		if (err instanceof StandardError) {
 			const { code, data: errData } = err;
 			type = code;
-			status = Errors[code] ?? 500;
+			status = 500;
 			data = { ...data, data: errData };
 		}
 		// OpenAPI Validator Error
