@@ -26,7 +26,8 @@
 		"lodash": "4.17.21",
 		"pino": "9.2.0",
 		"pino-http": "10.2.0",
-		"pino-pretty": "11.2.1"
+		"pino-pretty": "11.2.1",
+		"swagger-ui-express": "5.0.1"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "19.3.0",
@@ -46,6 +47,7 @@
 		"@types/lodash": "4.17.6",
 		"@types/node": "20.14.10",
 		"@types/supertest": "6.0.2",
+		"@types/swagger-ui-express": "4.1.6",
 		"eslint": "9.6.0",
 		"eslint-config-prettier": "9.1.0",
 		"globals": "15.8.0",

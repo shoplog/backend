@@ -7,6 +7,9 @@ import { logger } from 'src/common/initializers/logger';
 import { errorHandlerMiddleware } from 'src/api/middlewares';
 import { NotFound } from 'express-openapi-validator/dist/openapi.validator';
 import { createUserRoutes } from 'src/api/routes/users.routes';
+import * as swaggerUi from 'swagger-ui-express';
+import { apiSpec } from 'src/api/schemas/openapi.schema';
+import { middleware as OpenApiValidatorMiddleware } from 'express-openapi-validator';
 
 export const setupApp = async () => {
 	const app = express();
@@ -22,6 +25,8 @@ export const setupApp = async () => {
 	app.set('trust proxy', 1);
 
 	app.use(compression());
+
+	app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiSpec, {}));
 
 	// Generate request id that will correlate all logs for a single request.
 	app.use((req, res, next) => {
@@ -46,14 +51,14 @@ export const setupApp = async () => {
 
 	app.use('/api/v1', await createUserRoutes());
 
-	// app.use(
-	// 	OpenApiValidatorMiddleware({
-	// 		apiSpec: OPEN_API_SPEC,
-	// 		validateApiSpec: false,
-	// 		validateRequests: true,
-	// 		validateResponses: true,
-	// 	})
-	// );
+	app.use(
+		OpenApiValidatorMiddleware({
+			apiSpec,
+			validateApiSpec: false,
+			validateRequests: true,
+			validateResponses: true,
+		})
+	);
 
 	app.use((req: Request) => {
 		throw new NotFound({ path: req.url, message: 'Not Found' });

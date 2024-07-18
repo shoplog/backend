@@ -1,5 +1,4 @@
 import { ErrorRequestHandler } from 'express';
-import { Problem } from 'src/api/models';
 import { HttpError as OpenApiValidatorHttpError } from 'express-openapi-validator/dist/framework/types';
 import { UnauthorizedError } from 'express-oauth2-jwt-bearer';
 import { logger } from 'src/common/initializers/logger';
@@ -7,6 +6,7 @@ import { CodedError } from 'src/common/errors';
 import { Errors } from 'src/api/errors/error-map';
 import { STATUS_CODES } from 'http';
 import { CONFIG } from 'src/common/config/env';
+import { Problem } from 'src/api/schemas/problem.schema';
 
 export function errorHandlerMiddleware(): ErrorRequestHandler {
 	return (err, req, res, _next) => {
