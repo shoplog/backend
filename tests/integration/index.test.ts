@@ -54,15 +54,16 @@ describe('GET /', () => {
 		// Assert
 		expect(response.status).toBe(404);
 		expect(response.body).toMatchObject({
-			type: 'err_http',
-			status: 404,
+			type: 'about:blank',
+			code: 'not_found',
 			title: 'Not Found',
-			detail: 'Not Found',
+			status: 404,
+			detail: 'not found',
 			instance: `${response.request.url}`,
 			errors: [
 				{
-					name: '/does-not-exist',
-					reason: 'Not Found',
+					path: '/does-not-exist',
+					message: 'not found',
 				},
 			],
 		});

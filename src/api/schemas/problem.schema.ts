@@ -8,6 +8,11 @@ const ProblemSchema = Type.Object(
 			description: 'A URI reference that identifies the problem type',
 			default: 'about:blank',
 		}),
+		code: Type.String({
+			minLength: 1,
+			description: 'Error code type specific to the application',
+			default: 'unknown_error',
+		}),
 		title: Type.String({
 			minLength: 1,
 			description: 'A short, human-readable summary of the problem type',
@@ -76,9 +81,11 @@ const ValidationProblemSchema = Type.Composite(
 	}
 );
 
-type Problem = Static<typeof ProblemSchema>;
+type Problem = {
+	[key: string]: Record<string, unknown> | string | number | null | undefined;
+} & Static<typeof ProblemSchema>;
 type ValidationError = Static<typeof ValidationErrorSchema>;
-type ValidationProblem = Static<typeof ValidationProblemSchema>;
+type ValidationProblem = Static<typeof ValidationProblemSchema> & Problem;
 
 export {
 	// Types
