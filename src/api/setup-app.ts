@@ -8,7 +8,7 @@ import pinoHttp from 'pino-http';
 import { CUSTOM_HEADERS } from 'src/api/constants/headers';
 import { errorHandlerMiddleware } from 'src/api/middlewares';
 import { v1 } from 'src/api/openapi/schema';
-import { createUserRoutes } from 'src/api/routes/users.routes';
+import { createVehiclesRoutes } from 'src/api/routes/vehicles.route';
 import { logger } from 'src/common/initializers/logger';
 
 export const setupApp = async () => {
@@ -56,7 +56,7 @@ export const setupApp = async () => {
 		res.status(200).end();
 	});
 
-	app.use('/api/v1', await createUserRoutes());
+	app.use('/v1', await createVehiclesRoutes());
 
 	app.use(
 		OpenApiValidatorMiddleware({

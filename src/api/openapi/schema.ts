@@ -1,5 +1,6 @@
 import { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types';
 import { ProblemSchema, ValidationProblemSchema } from 'src/api/openapi/schemas/problem.schema';
+import { VehiclesSearchByVinResponseBodySchema, VinSchema } from 'src/api/openapi/schemas/vehicles.schema';
 import { CONFIG } from 'src/common/config/env';
 
 const createProblemResponse = (description: string, schema: OpenAPIV3.SchemaObject): OpenAPIV3.ResponseObject => ({
@@ -36,6 +37,15 @@ const InternalServerErrorResponse = createProblemResponse(
 	ProblemSchema
 );
 
+const defaultProblemResponses: OpenAPIV3.ResponsesObject = {
+	400: BadRequestResponse,
+	401: UnauthorizedResponse,
+	403: ForbiddenResponse,
+	404: NotFoundResponse,
+	422: UnprocessableEntityResponse,
+	500: InternalServerErrorResponse,
+};
+
 const v1: OpenAPIV3.Document = {
 	openapi: '3.0.3',
 	info: {
@@ -53,7 +63,35 @@ const v1: OpenAPIV3.Document = {
 			description: 'Production',
 		},
 	],
-	paths: {},
+	paths: {
+		'/vehicles/search/by-vin': {
+			get: {
+				summary: 'Search for a vehicle by VIN',
+				description: 'Search for a vehicle by VIN',
+				operationId: 'vehiclesSearchByVin',
+				parameters: [
+					{
+						name: 'vin',
+						in: 'query',
+						description: 'Vehicle Identification Number',
+						required: true,
+						schema: VinSchema,
+					},
+				],
+				responses: {
+					200: {
+						description: 'Vehicle found',
+						content: {
+							'application/json': {
+								schema: VehiclesSearchByVinResponseBodySchema,
+							},
+						},
+						...defaultProblemResponses,
+					},
+				},
+			},
+		},
+	},
 	components: {
 		headers: {
 			'x-request-id': {
