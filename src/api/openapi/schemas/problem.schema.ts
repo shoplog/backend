@@ -1,5 +1,5 @@
 import { Static, Type } from '@sinclair/typebox';
-import { FixedInteger } from 'src/api/schemas/common.schema';
+import { FixedInteger } from 'src/api/openapi/schemas/common.schema';
 
 const ProblemSchema = Type.Object(
 	{
@@ -43,8 +43,9 @@ const ProblemSchema = Type.Object(
 
 const ValidationErrorSchema = Type.Object(
 	{
-		name: Type.String({ minLength: 1 }),
-		reason: Type.String({ minLength: 1 }),
+		path: Type.String(),
+		message: Type.String(),
+		errorCode: Type.Optional(Type.String()),
 	},
 	{
 		description: 'A validation error',
@@ -62,18 +63,20 @@ const ValidationProblemSchema = Type.Composite(
 		examples: [
 			{
 				type: 'about:blank',
+				code: 'validation_error',
 				title: 'Validation Error',
 				status: 400,
 				detail: 'One or more validation errors occurred',
 				instance: 'https://example.com/api/v1/resource/123',
 				errors: [
 					{
-						name: 'name',
-						reason: 'Name is required',
+						path: '/boop',
+						message: 'Boop is required',
 					},
 					{
-						name: 'email',
-						reason: 'Email is invalid',
+						path: '/boop',
+						message: 'Boop is required',
+						errorCode: 'required',
 					},
 				],
 			},

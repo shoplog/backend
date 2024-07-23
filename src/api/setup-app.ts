@@ -7,8 +7,8 @@ import helmet from 'helmet';
 import pinoHttp from 'pino-http';
 import { CUSTOM_HEADERS } from 'src/api/constants/headers';
 import { errorHandlerMiddleware } from 'src/api/middlewares';
+import { v1 } from 'src/api/openapi/schema';
 import { createUserRoutes } from 'src/api/routes/users.routes';
-import { apiSpec } from 'src/api/schemas/openapi.schema';
 import { logger } from 'src/common/initializers/logger';
 
 export const setupApp = async () => {
@@ -26,13 +26,11 @@ export const setupApp = async () => {
 
 	app.use(compression());
 
-	// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiSpec, {}));
-
 	app.use(
 		'/api-docs',
 		apiReference({
 			spec: {
-				content: apiSpec,
+				content: v1,
 			},
 		})
 	);
@@ -62,7 +60,7 @@ export const setupApp = async () => {
 
 	app.use(
 		OpenApiValidatorMiddleware({
-			apiSpec,
+			apiSpec: v1,
 			validateApiSpec: false,
 			validateRequests: true,
 			validateResponses: true,

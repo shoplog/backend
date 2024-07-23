@@ -3,7 +3,7 @@ import { HttpError } from 'express-openapi-validator/dist/framework/types';
 import { STATUS_CODES } from 'http';
 import { snakeCase } from 'lodash';
 import { getErrorMap } from 'src/api/errors/error-map';
-import { Problem } from 'src/api/schemas/problem.schema';
+import { Problem } from 'src/api/openapi/schemas/problem.schema';
 import { CONFIG } from 'src/common/config/env';
 import { StandardError } from 'src/common/errors/standard.error';
 import { logger } from 'src/common/initializers/logger';
