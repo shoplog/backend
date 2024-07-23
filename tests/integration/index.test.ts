@@ -58,12 +58,12 @@ describe('GET /', () => {
 			code: 'not_found',
 			title: 'Not Found',
 			status: 404,
-			detail: 'not found',
+			detail: 'Not Found',
 			instance: `${response.request.url}`,
 			errors: [
 				{
 					path: '/does-not-exist',
-					message: 'not found',
+					message: 'Not Found',
 				},
 			],
 		});
