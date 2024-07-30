@@ -7,9 +7,10 @@ import helmet from 'helmet';
 import pinoHttp from 'pino-http';
 import { CUSTOM_HEADERS } from 'src/api/constants/headers';
 import { errorHandlerMiddleware } from 'src/api/middlewares';
-import { v1 } from 'src/api/openapi/schema';
 import { createVehiclesRoutes } from 'src/api/routes/vehicles.route';
 import { logger } from 'src/common/initializers/logger';
+
+const apiSpec = 'data/openapi/v1.yml';
 
 export const setupApp = async () => {
 	const app = express();
@@ -30,7 +31,7 @@ export const setupApp = async () => {
 		'/api-docs',
 		apiReference({
 			spec: {
-				content: v1,
+				content: apiSpec,
 			},
 		})
 	);
@@ -52,15 +53,15 @@ export const setupApp = async () => {
 
 	app.use(json());
 
-	app.get('/', (req, res) => {
+	app['get']('/', (req, res) => {
 		res.status(200).end();
 	});
 
-	app.use('/v1', await createVehiclesRoutes());
+	app.use('/api/v1', await createVehiclesRoutes());
 
 	app.use(
 		OpenApiValidatorMiddleware({
-			apiSpec: v1,
+			apiSpec,
 			validateApiSpec: false,
 			validateRequests: true,
 			validateResponses: true,

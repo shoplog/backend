@@ -8,6 +8,9 @@ servers:
     description: Development
   - url: https://unknown.com/api/v1
     description: Production
+tags:
+  - name: Vehicles
+    description: Vehicle operations
 paths:
   /:
     get:
@@ -30,6 +33,7 @@ paths:
     get:
       summary: Search for a vehicle by VIN
       operationId: vehiclesSearchByVin
+      tags: ['Vehicles']
       parameters:
         - $ref: '#/components/parameters/vin'
       responses:
@@ -144,6 +148,7 @@ components:
     Problem:
       description: A Problem Details object (RFC 9457)
       type: object
+      additionalProperties: true
       required:
         - type
         - title

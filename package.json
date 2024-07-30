@@ -9,7 +9,8 @@
 		"lint:fix": "prettier --write . && eslint . --fix",
 		"format": "prettier --check .",
 		"format:fix": "prettier --write .",
-		"prepare": "husky"
+		"prepare": "husky",
+		"openapi": "openapi-typescript data/openapi/v1.yml -o src/api/types/openapi.d.ts --empty-objects-unknown && prettier --write src/api/types/openapi.d.ts"
 	},
 	"author": "",
 	"license": "MIT",
