@@ -2,18 +2,31 @@ import { apiReference } from '@scalar/express-api-reference';
 import compression from 'compression';
 import express, { Request, json } from 'express';
 import { middleware as OpenApiValidatorMiddleware } from 'express-openapi-validator';
-import { NotFound } from 'express-openapi-validator/dist/openapi.validator';
+import { OpenApiSpecLoader } from 'express-openapi-validator/dist/framework/openapi.spec.loader';
+import { NotFound, OpenAPIV3 } from 'express-openapi-validator/dist/framework/types';
+import 'express-openapi-validator/dist/middlewares/parsers/schema.parse';
 import helmet from 'helmet';
 import pinoHttp from 'pino-http';
+import { OPEN_API_SPEC_FILE_PATH } from 'src/api/constants/files';
 import { CUSTOM_HEADERS } from 'src/api/constants/headers';
 import { errorHandlerMiddleware } from 'src/api/middlewares';
 import { createVehiclesRoutes } from 'src/api/routes/vehicles.route';
 import { logger } from 'src/common/initializers/logger';
 
-const apiSpec = 'data/openapi/v1.yml';
+export const loadOpenApiSpec = async (): Promise<OpenAPIV3.Document> => {
+	const loader = new OpenApiSpecLoader({
+		apiDoc: OPEN_API_SPEC_FILE_PATH,
+		validateApiSpec: true,
+	});
 
-export const setupApp = async () => {
+	const { apiDoc: apiSpec } = await loader.load();
+
+	return apiSpec;
+};
+
+export const createApp = async () => {
 	const app = express();
+	const apiSpec = await loadOpenApiSpec();
 
 	app.use(
 		helmet({
@@ -28,7 +41,7 @@ export const setupApp = async () => {
 	app.use(compression());
 
 	app.use(
-		'/api-docs',
+		'/docs',
 		apiReference({
 			spec: {
 				content: apiSpec,

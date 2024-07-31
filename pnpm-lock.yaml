@@ -5499,6 +5499,11 @@ packages:
     engines: {node: '>= 14'}
     hasBin: true
 
+  yaml@2.5.0:
+    resolution: {integrity: sha512-2wWLbGbYDiSqqIKoPjar3MPgB94ErzCtrNE1FdqGuaO0pi2JGjmE8aW8TDZwzU7vuxcGRdL/4gPQwQ7hD5AMSw==}
+    engines: {node: '>= 14'}
+    hasBin: true
+
   yargs-parser@21.1.1:
     resolution: {integrity: sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw==}
     engines: {node: '>=12'}
@@ -7262,7 +7267,7 @@ snapshots:
       '@scalar/themes': 0.9.15(typescript@5.5.4)
       axios: 1.7.2
       nanoid: 5.0.7
-      yaml: 2.4.5
+      yaml: 2.5.0
       zod: 3.23.8
     transitivePeerDependencies:
       - debug
@@ -7283,7 +7288,7 @@ snapshots:
       ajv-formats: 3.0.1(ajv@8.17.1)
       jsonpointer: 5.0.1
       leven: 4.0.0
-      yaml: 2.4.5
+      yaml: 2.5.0
 
   '@scalar/snippetz-core@0.1.4':
     dependencies:
@@ -11048,7 +11053,7 @@ snapshots:
   postcss-load-config@4.0.2(postcss@8.4.39):
     dependencies:
       lilconfig: 3.1.2
-      yaml: 2.4.5
+      yaml: 2.5.0
     optionalDependencies:
       postcss: 8.4.39
 
@@ -12100,6 +12105,8 @@ snapshots:
   yaml-ast-parser@0.0.43: {}
 
   yaml@2.4.5: {}
+
+  yaml@2.5.0: {}
 
   yargs-parser@21.1.1: {}
 
