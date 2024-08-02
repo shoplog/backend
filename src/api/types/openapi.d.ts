@@ -110,7 +110,7 @@ export interface components {
 			year?: number;
 			/** @description Vehicle attributes */
 			attributes?: {
-				[key: string]: (string | number) | undefined;
+				[key: string]: string | number;
 			};
 		};
 		/** @description A Problem Details object (RFC 9457) */
@@ -134,6 +134,7 @@ export interface components {
 			 * @description URI reference that identifies the specific occurrence of the problem
 			 */
 			instance?: string;
+		} & {
 			[key: string]: unknown;
 		};
 		/** @example {
