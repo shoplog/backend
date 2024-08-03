@@ -28,7 +28,9 @@
 		"lodash": "4.17.21",
 		"pino": "9.3.2",
 		"pino-http": "10.2.0",
-		"pino-pretty": "11.2.2"
+		"pino-pretty": "11.2.2",
+		"tarn": "3.0.2",
+		"tedious": "18.3.0"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "19.3.0",
