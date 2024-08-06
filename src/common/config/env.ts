@@ -21,12 +21,11 @@ const schema = Type.Object({
 	LOG_PRINT_PRETTY: StringAsBoolean({ default: 'true' }),
 	AUTH0_ISSUER: Type.String({ minLength: 1 }),
 	AUTH0_AUDIENCE: Type.String({ minLength: 1 }),
-	DB_HOST: Type.String({ minLength: 1 }),
-	DB_NAME: Type.String({ minLength: 1 }),
-	DB_PORT: Type.String({ minLength: 1 }),
-	DB_USERNAME: Type.String({ minLength: 1 }),
-	DB_PASSWORD: Type.String({ minLength: 1 }),
-	DB_URL: Type.String({ minLength: 1 }),
+	SQL_SERVER_HOST: Type.String({ minLength: 1 }),
+	SQL_SERVER_DATABASE: Type.String({ minLength: 1 }),
+	SQL_SERVER_PORT: Type.String({ minLength: 1 }),
+	SQL_SERVER_USERNAME: Type.String({ minLength: 1 }),
+	SQL_SERVER_PASSWORD: Type.String({ minLength: 1 }),
 });
 
 if (!Value.Check(schema, process.env)) {
@@ -41,12 +40,11 @@ const CONFIG = {
 		audience: env.AUTH0_AUDIENCE,
 	},
 	mssql: {
-		host: env.DB_HOST,
-		database: env.DB_NAME,
-		port: env.DB_PORT,
-		user: env.DB_USERNAME,
-		password: env.DB_PASSWORD,
-		url: env.DB_URL,
+		host: env.SQL_SERVER_HOST,
+		database: env.SQL_SERVER_DATABASE,
+		port: env.SQL_SERVER_PORT,
+		user: env.SQL_SERVER_USERNAME,
+		password: env.SQL_SERVER_PASSWORD,
 	},
 	environment: env.NODE_ENV,
 	logging: {

@@ -144,7 +144,7 @@ components:
           additionalProperties:
             oneOf:
               - type: string
-              - type: integer
+              - type: number
     Problem:
       description: A Problem Details object (RFC 9457)
       type: object

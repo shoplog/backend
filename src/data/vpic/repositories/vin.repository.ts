@@ -1,3 +1,7 @@
+import { sql } from 'kysely';
+import { VPICDatabase } from 'src/common/initializers/database';
+import { DecodingOutput } from 'src/data/vpic/vpic-db';
+
 export type VehicleElements = {
 	ABS?: string | null;
 	ABSId?: number | null;
@@ -246,4 +250,31 @@ export type VehicleElements = {
 
 export interface IVinRepository {
 	searchByVin(vin: string): Promise<VehicleElements>;
+}
+
+export class VinRepository implements IVinRepository {
+	constructor(readonly db: VPICDatabase) {}
+
+	async searchByVin(vin: string): Promise<VehicleElements> {
+		const { rows: data } = await sql<DecodingOutput>`EXEC spVinDecode ${vin}`.execute(this.db);
+		const result: VehicleElements = data.reduce(
+			(acc: { [code: string]: string | number | null }, cur: DecodingOutput) => {
+				const key = cur.Code as keyof VehicleElements;
+				if (cur.DataType == 'string') {
+					acc[key] = cur.Value;
+				} else if (cur.DataType == 'int' || cur.DataType == 'decimal') {
+					acc[key] = cur.Value ? Number(cur.Value) : null;
+				} else {
+					const keyId = `${cur.Code}Id` as keyof VehicleElements;
+					acc[key] = cur.Value;
+					acc[keyId] = cur.AttributeId ? Number(cur.AttributeId) : null;
+				}
+
+				return acc;
+			},
+			{}
+		);
+
+		return result;
+	}
 }

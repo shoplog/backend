@@ -1,9 +1,9 @@
 import { apiReference } from '@scalar/express-api-reference';
 import compression from 'compression';
-import express, { Request, json } from 'express';
+import express, { json } from 'express';
 import { middleware as OpenApiValidatorMiddleware } from 'express-openapi-validator';
 import { OpenApiSpecLoader } from 'express-openapi-validator/dist/framework/openapi.spec.loader';
-import { NotFound, OpenAPIV3 } from 'express-openapi-validator/dist/framework/types';
+import { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types';
 import 'express-openapi-validator/dist/middlewares/parsers/schema.parse';
 import helmet from 'helmet';
 import pinoHttp from 'pino-http';
@@ -70,20 +70,16 @@ export const createApp = async () => {
 		res.status(200).end();
 	});
 
-	app.use('/api/v1', await createVehiclesRoutes());
-
 	app.use(
 		OpenApiValidatorMiddleware({
 			apiSpec,
-			validateApiSpec: false,
+			validateApiSpec: true,
 			validateRequests: true,
 			validateResponses: true,
 		})
 	);
 
-	app.use((req: Request) => {
-		throw new NotFound({ path: req.url, message: 'Not Found' });
-	});
+	app.use('/api/v1', await createVehiclesRoutes());
 
 	app.use(errorHandlerMiddleware());
 

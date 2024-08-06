@@ -44,3 +44,5 @@ const dialect = new MssqlDialect({
 export const VPICDatabase = new Kysely<vPICList_Lite1>({
 	dialect,
 });
+
+export type VPICDatabase = typeof VPICDatabase;
