@@ -16,7 +16,7 @@ services:
     volumes:
       - ./.docker/postgres:/var/lib/postgresql/data
   mssql:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    image: helloworld65/vpic-mssql:latest
     container_name: shoplog-vpic-db
     ports:
       - '${SQL_SERVER_PORT}:${SQL_SERVER_PORT}'
@@ -27,10 +27,6 @@ services:
       test: ['CMD', 'sqlcmd', '-U', '${SQL_SERVER_USER}', '-P', '${SQL_SERVER_PASSWORD}', '-Q', 'SELECT 1']
       interval: 10s
       retries: 5
-    volumes:
-      - ./.docker/mssql:/var/opt/mssql
-      - ./data/mssql/backups:/var/opt/mssql/backups
-      - ./data/mssql/scripts:/var/opt/mssql/scripts
 
   # redis:
   #   image: redis:latest
