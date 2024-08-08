@@ -57,7 +57,7 @@ export class VPICService implements IVPICService {
 	) {}
 
 	async getModelAttributesByIdAndYear(modelId: number, year: number): Promise<ModelAttributeDto[]> {
-		const model = this.modelRepository.getModel(modelId);
+		const model = await this.modelRepository.getModel(modelId);
 
 		if (!model) {
 			throw new ResourceNotFoundError('Model', { modelId });

@@ -27,5 +27,14 @@ describe('/vpic/models', () => {
 			// Assert
 			expect(body).toMatchSnapshot();
 		});
+
+		it('should respond with 404 Not found - model not found', async () => {
+			// Arrange
+			const modelId = 9999999; // unknown
+			const year = 2002;
+
+			// Act
+			await supertest(app).get(`${resourceUrl}/${modelId}/year/${year}/attributes`).expect(404);
+		});
 	});
 });
