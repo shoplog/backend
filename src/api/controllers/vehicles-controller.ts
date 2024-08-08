@@ -9,7 +9,8 @@ export type VehiclesSearchByVinRequest = Request<
 	paths['/vehicles/search/by-vin']['get']['parameters']['query']
 >;
 
-export type VehiclesSearchByVinResponse = Response<components['schemas']['VehiclesSearchByVinResult']>;
+export type VehiclesSearchByVinResponseBody = components['schemas']['VehiclesSearchByVinResult'];
+export type VehiclesSearchByVinResponse = Response<VehiclesSearchByVinResponseBody>;
 
 export class VehiclesController {
 	constructor(readonly vehicleSearchService: VehicleSearchService) {}

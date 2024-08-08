@@ -5,6 +5,7 @@ import {
 	UnauthorizedError,
 } from 'express-oauth2-jwt-bearer';
 import { snakeCase } from 'lodash';
+import { SearchByVinError } from 'src/domain/errors/search-by-vin.error';
 
 type ErrorConfig = {
 	code: string;
@@ -68,5 +69,6 @@ mapError(InvalidRequestError, 400, (error) => ({ headers: error.headers }));
 mapError(InvalidTokenError, 401, (error) => ({ headers: error.headers }));
 mapError(InsufficientScopeError, 401, (error) => ({ headers: error.headers }));
 mapError(UnauthorizedError, 401, (error) => ({ headers: error.headers }));
+mapError(SearchByVinError, 422, (error) => ({ data: error.data }));
 
 export { getErrorMap };

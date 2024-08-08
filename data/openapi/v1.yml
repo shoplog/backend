@@ -64,6 +64,8 @@ components:
       required: true
       schema:
         type: string
+        minLength: 17
+        maxLength: 17
       example: 5TEWN72N82Z891171
   responses:
     '400':
