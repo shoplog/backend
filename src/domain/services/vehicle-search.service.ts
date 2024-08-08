@@ -1,5 +1,6 @@
 import { camelCase, capitalize } from 'lodash';
 import { IVinRepository, VehicleElements } from 'src/data/vpic/repositories/vin.repository';
+import { IYearRepository } from 'src/data/vpic/repositories/year.repository';
 import { SearchByVinError } from 'src/domain/errors/search-by-vin.error';
 
 export type VehicleSearchByVinResultDto = {
@@ -17,10 +18,14 @@ export type VehicleSearchByVinResultDto = {
 
 export interface IVehicleSearchService {
 	searchByVin(vin: string): Promise<VehicleSearchByVinResultDto | undefined>;
+	getAllSupportedYears(): Promise<number[]>;
 }
 
 export class VehicleSearchService implements IVehicleSearchService {
-	constructor(readonly vinRepository: IVinRepository) {}
+	constructor(
+		readonly vinRepository: IVinRepository,
+		readonly yearRepository: IYearRepository
+	) {}
 
 	async searchByVin(vin: string): Promise<VehicleSearchByVinResultDto> {
 		const vehicleElements = await this.vinRepository.searchByVin(vin);
@@ -83,5 +88,9 @@ export class VehicleSearchService implements IVehicleSearchService {
 				errorCode,
 			});
 		}
+	}
+
+	async getAllSupportedYears(): Promise<number[]> {
+		return await this.yearRepository.getAllYears();
 	}
 }

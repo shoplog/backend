@@ -3,7 +3,7 @@ import compression from 'compression';
 import express, { json } from 'express';
 import { middleware as OpenApiValidatorMiddleware } from 'express-openapi-validator';
 import { OpenApiSpecLoader } from 'express-openapi-validator/dist/framework/openapi.spec.loader';
-import { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types';
+import { NotFound, OpenAPIV3 } from 'express-openapi-validator/dist/framework/types';
 import 'express-openapi-validator/dist/middlewares/parsers/schema.parse';
 import helmet from 'helmet';
 import pinoHttp from 'pino-http';
@@ -66,10 +66,6 @@ export const createApp = async () => {
 
 	app.use(json());
 
-	app['get']('/', (req, res) => {
-		res.status(200).end();
-	});
-
 	app.use(
 		OpenApiValidatorMiddleware({
 			apiSpec,
@@ -79,7 +75,15 @@ export const createApp = async () => {
 		})
 	);
 
+	app['get']('/', (req, res) => {
+		res.status(200).end();
+	});
+
 	app.use('/api/v1', await createVehiclesRoutes());
+
+	app.use((req, _res, _next) => {
+		throw new NotFound({ path: req.originalUrl });
+	});
 
 	app.use(errorHandlerMiddleware());
 

@@ -1,13 +1,13 @@
-import { VehiclesSearchByVinResult } from 'src/api/types/vehicles';
 import { IVinRepository, VehicleElements } from 'src/data/vpic/repositories/vin.repository';
-import { VehicleSearchService } from 'src/domain/services/vehicle-search.service';
+import { IYearRepository } from 'src/data/vpic/repositories/year.repository';
+import { VehicleSearchByVinResultDto, VehicleSearchService } from 'src/domain/services/vehicle-search.service';
 
 describe('VehicleSearchService', () => {
 	describe('searchByVin()', () => {
 		it('should return a vehicle search result', async () => {
 			// arrange
 			const vin = '5TEWN72N82Z891171';
-			const expectedResult: VehiclesSearchByVinResult = {
+			const expectedResult: VehicleSearchByVinResultDto = {
 				vin,
 				makeId: 1,
 				make: 'Toyota',
@@ -36,13 +36,42 @@ describe('VehicleSearchService', () => {
 				searchByVin,
 			};
 
-			const service = new VehicleSearchService(searchRepositoryMock);
+			const yearRepositoryMock: IYearRepository = {
+				getAllYears: jest.fn(),
+			};
+
+			const service = new VehicleSearchService(searchRepositoryMock, yearRepositoryMock);
 
 			// act
 			const result = await service.searchByVin(vin);
 
 			// assert
 			expect(result).toMatchObject(expectedResult);
+		});
+	});
+
+	describe('getAllSupportedYears()', () => {
+		it('should return a list of vehicle years', async () => {
+			// arrange
+			const expectedYears = [2000, 2001, 2002];
+
+			const getAllYears = jest.fn(() => Promise.resolve(expectedYears));
+
+			const searchRepositoryMock: IVinRepository = {
+				searchByVin: jest.fn(),
+			};
+
+			const yearRepositoryMock: IYearRepository = {
+				getAllYears,
+			};
+
+			const service = new VehicleSearchService(searchRepositoryMock, yearRepositoryMock);
+
+			// act
+			const result = await service.getAllSupportedYears();
+
+			// assert
+			expect(result).toEqual(expectedYears);
 		});
 	});
 });

@@ -49,21 +49,18 @@ describe('GET /', () => {
 
 	it('should return 404 Not Found', async () => {
 		// Act
-		const response = await supertest(app).get('/does-not-exist');
+		const response = await supertest(app).get('/does-not-exist').expect(404);
 
 		// Assert
-		expect(response.status).toBe(404);
 		expect(response.body).toMatchObject({
 			type: 'about:blank',
 			code: 'not_found',
 			title: 'Not Found',
 			status: 404,
-			detail: 'Not Found',
 			instance: `${response.request.url}`,
 			errors: [
 				{
 					path: '/does-not-exist',
-					message: 'Not Found',
 				},
 			],
 		});
