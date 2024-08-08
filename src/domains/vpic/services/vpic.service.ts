@@ -1,9 +1,9 @@
 import { camelCase, capitalize } from 'lodash';
 import { IVinRepository, VehicleElements } from 'src/data/vpic/repositories/vin.repository';
 import { IYearRepository } from 'src/data/vpic/repositories/year.repository';
-import { SearchByVinError } from 'src/domain/errors/search-by-vin.error';
+import { SearchByVinError } from 'src/domains/vpic/errors/search-by-vin.error';
 
-export type VehicleSearchByVinResultDto = {
+export type SearchByVinResultDto = {
 	vin?: string;
 	suggestedVin?: string;
 	makeId?: number;
@@ -16,19 +16,19 @@ export type VehicleSearchByVinResultDto = {
 	};
 };
 
-export interface IVehicleSearchService {
-	searchByVin(vin: string): Promise<VehicleSearchByVinResultDto | undefined>;
+export interface IVPICService {
+	searchByVin(vin: string): Promise<SearchByVinResultDto | undefined>;
 	getAllSupportedYears(): Promise<number[]>;
 }
 
-export class VehicleSearchService implements IVehicleSearchService {
+export class VPICService implements IVPICService {
 	constructor(
 		readonly vinRepository: IVinRepository,
 		readonly yearRepository: IYearRepository
 	) {}
 
-	async searchByVin(vin: string): Promise<VehicleSearchByVinResultDto> {
-		const vehicleElements = await this.vinRepository.searchByVin(vin);
+	async searchByVin(vin: string): Promise<SearchByVinResultDto> {
+		const vehicleElements = await this.vinRepository.vinDecode(vin);
 		const excludeElements: (keyof VehicleElements)[] = [
 			'Make',
 			'MakeId',

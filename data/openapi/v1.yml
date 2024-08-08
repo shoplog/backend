@@ -29,11 +29,11 @@ paths:
                     example: up
         '500':
           $ref: '#/components/responses/500'
-  /vehicles/search/by-vin:
+  /vpic/vin:
     get:
       summary: Search for a vehicle by VIN
-      operationId: vehiclesSearchByVin
-      tags: ['Vehicles Search']
+      operationId: getVPICVin
+      tags: ['VPIC']
       parameters:
         - $ref: '#/components/parameters/vin'
       responses:
@@ -42,7 +42,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VehiclesSearchByVinResponseBody'
+                $ref: '#/components/schemas/VPICVinResponseBody'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -55,18 +55,18 @@ paths:
           $ref: '#/components/responses/422'
         '500':
           $ref: '#/components/responses/500'
-  /vehicles/search/years:
+  /vpic/years:
     get:
       summary: Get a list of supported vehicle years
-      operationId: vehiclesSearchYears
-      tags: ['Vehicles Search']
+      operationId: getVPICYears
+      tags: ['VPIC']
       responses:
         '200':
           description: Vehicle years found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VehiclesSearchYearsResponseBody'
+                $ref: '#/components/schemas/VPICYearsResponseBody'
         '401':
           $ref: '#/components/responses/401'
         '403':
@@ -123,7 +123,7 @@ components:
             $ref: '#/components/schemas/Problem'
       description: Request was not processed due to an internal server error
   schemas:
-    VehiclesSearchByVinResponseBody:
+    VPICVinResponseBody:
       description: 'A vehicle search result'
       type: object
       properties:
@@ -165,7 +165,7 @@ components:
             oneOf:
               - type: string
               - type: number
-    VehiclesSearchYearsResponseBody:
+    VPICYearsResponseBody:
       description: 'A list of vehicle years'
       type: array
       items:

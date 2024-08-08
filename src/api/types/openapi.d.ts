@@ -47,7 +47,7 @@ export interface paths {
 		patch?: never;
 		trace?: never;
 	};
-	'/vehicles/search/by-vin': {
+	'/vpic/vin': {
 		parameters: {
 			query?: never;
 			header?: never;
@@ -55,7 +55,7 @@ export interface paths {
 			cookie?: never;
 		};
 		/** Search for a vehicle by VIN */
-		get: operations['vehiclesSearchByVin'];
+		get: operations['getVPICVin'];
 		put?: never;
 		post?: never;
 		delete?: never;
@@ -64,7 +64,7 @@ export interface paths {
 		patch?: never;
 		trace?: never;
 	};
-	'/vehicles/search/years': {
+	'/vpic/years': {
 		parameters: {
 			query?: never;
 			header?: never;
@@ -72,7 +72,7 @@ export interface paths {
 			cookie?: never;
 		};
 		/** Get a list of supported vehicle years */
-		get: operations['vehiclesSearchYears'];
+		get: operations['getVPICYears'];
 		put?: never;
 		post?: never;
 		delete?: never;
@@ -86,7 +86,7 @@ export type webhooks = Record<string, never>;
 export interface components {
 	schemas: {
 		/** @description A vehicle search result */
-		VehiclesSearchByVinResponseBody: {
+		VPICVinResponseBody: {
 			/**
 			 * @description Vehicle Identification Number
 			 * @example 5TEWN72N82Z891171
@@ -138,7 +138,7 @@ export interface components {
 		 *       2002
 		 *     ]
 		 */
-		VehiclesSearchYearsResponseBody: number[];
+		VPICYearsResponseBody: number[];
 		/** @description A Problem Details object (RFC 9457) */
 		Problem: {
 			/**
@@ -258,7 +258,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-	vehiclesSearchByVin: {
+	getVPICVin: {
 		parameters: {
 			query: {
 				/**
@@ -279,7 +279,7 @@ export interface operations {
 					[name: string]: unknown;
 				};
 				content: {
-					'application/json': components['schemas']['VehiclesSearchByVinResponseBody'];
+					'application/json': components['schemas']['VPICVinResponseBody'];
 				};
 			};
 			400: components['responses']['400'];
@@ -290,7 +290,7 @@ export interface operations {
 			500: components['responses']['500'];
 		};
 	};
-	vehiclesSearchYears: {
+	getVPICYears: {
 		parameters: {
 			query?: never;
 			header?: never;
@@ -305,7 +305,7 @@ export interface operations {
 					[name: string]: unknown;
 				};
 				content: {
-					'application/json': components['schemas']['VehiclesSearchYearsResponseBody'];
+					'application/json': components['schemas']['VPICYearsResponseBody'];
 				};
 			};
 			401: components['responses']['401'];

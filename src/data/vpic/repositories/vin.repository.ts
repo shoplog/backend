@@ -249,13 +249,13 @@ export type VehicleElements = {
 };
 
 export interface IVinRepository {
-	searchByVin(vin: string): Promise<VehicleElements>;
+	vinDecode(vin: string): Promise<VehicleElements>;
 }
 
 export class VinRepository implements IVinRepository {
 	constructor(readonly db: VPICDatabase) {}
 
-	async searchByVin(vin: string): Promise<VehicleElements> {
+	async vinDecode(vin: string): Promise<VehicleElements> {
 		const { rows: data } = await sql<DecodingOutput>`EXEC spVinDecode ${vin}`.execute(this.db);
 		const result: VehicleElements = data.reduce(
 			(acc: { [code: string]: string | number | null }, cur: DecodingOutput) => {

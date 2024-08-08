@@ -10,7 +10,7 @@ import pinoHttp from 'pino-http';
 import { OPEN_API_SPEC_FILE_PATH } from 'src/api/constants/files';
 import { CUSTOM_HEADERS } from 'src/api/constants/headers';
 import { errorHandlerMiddleware } from 'src/api/middlewares';
-import { createVehiclesRoutes } from 'src/api/routes/vehicles.route';
+import { createVPICRoutes } from 'src/api/routes/vpic.route';
 import { logger } from 'src/common/initializers/logger';
 
 export const loadOpenApiSpec = async (): Promise<OpenAPIV3.Document> => {
@@ -79,7 +79,7 @@ export const createApp = async () => {
 		res.status(200).end();
 	});
 
-	app.use('/api/v1', await createVehiclesRoutes());
+	app.use('/api/v1', await createVPICRoutes());
 
 	app.use((req, _res, _next) => {
 		throw new NotFound({ path: req.originalUrl });

@@ -5,7 +5,7 @@ import {
 	UnauthorizedError,
 } from 'express-oauth2-jwt-bearer';
 import { snakeCase } from 'lodash';
-import { SearchByVinError } from 'src/domain/errors/search-by-vin.error';
+import { SearchByVinError } from 'src/domains/vpic/errors/search-by-vin.error';
 
 type ErrorConfig = {
 	code: string;
