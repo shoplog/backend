@@ -47,7 +47,7 @@ export interface paths {
 		patch?: never;
 		trace?: never;
 	};
-	'/vpic/vin': {
+	'/vpic/vin/{vin}': {
 		parameters: {
 			query?: never;
 			header?: never;
@@ -81,7 +81,7 @@ export interface paths {
 		patch?: never;
 		trace?: never;
 	};
-	'/vpic/makes': {
+	'/vpic/years/{year}/makes': {
 		parameters: {
 			query?: never;
 			header?: never;
@@ -89,7 +89,7 @@ export interface paths {
 			cookie?: never;
 		};
 		/** Get a list of supported vehicle makes by year */
-		get: operations['getVPICMakesByYear'];
+		get: operations['getVPICYearMakes'];
 		put?: never;
 		post?: never;
 		delete?: never;
@@ -98,7 +98,7 @@ export interface paths {
 		patch?: never;
 		trace?: never;
 	};
-	'/vpic/models': {
+	'/vpic/makes/{makeId}/year/{year}/models': {
 		parameters: {
 			query?: never;
 			header?: never;
@@ -106,7 +106,24 @@ export interface paths {
 			cookie?: never;
 		};
 		/** Get a list of supported vehicle models by make and year */
-		get: operations['getVPICModelsByMakeIdAndYear'];
+		get: operations['getVPICMYearMakeModels'];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/vpic/models/{modelId}/year/{year}/attributes': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/** Get a list of supported vehicle attributes by model ID and year */
+		get: operations['getVPICModelAttributesByModelIdAndYear'];
 		put?: never;
 		post?: never;
 		delete?: never;
@@ -125,7 +142,7 @@ export interface components {
 			 * @description Vehicle Identification Number
 			 * @example 5TEWN72N82Z891171
 			 */
-			vin?: string;
+			vin: string;
 			/**
 			 * @description Suggested Vehicle Identification Number
 			 * @example 5TEWN72N82Z891171
@@ -136,29 +153,29 @@ export interface components {
 			 * @description Vehicle make ID
 			 * @example 1
 			 */
-			makeId?: number;
+			makeId: number;
 			/**
 			 * @description Vehicle make
 			 * @example Toyota
 			 */
-			make?: string;
+			make: string;
 			/**
 			 * Format: int32
 			 * @description Vehicle model ID
 			 * @example 1
 			 */
-			modelId?: number;
+			modelId: number;
 			/**
 			 * @description Vehicle model
 			 * @example Tacoma
 			 */
-			model?: string;
+			model: string;
 			/**
 			 * Format: int32
 			 * @description Vehicle year
 			 * @example 2002
 			 */
-			year?: number;
+			year: number;
 			/** @description Vehicle attributes */
 			attributes?: {
 				[key: string]: string | number;
@@ -177,14 +194,34 @@ export interface components {
 		VPICMakesResponseBody: components['schemas']['Lookup'][];
 		/** @description A list of vehicle models */
 		VPICModelsResponseBody: components['schemas']['Lookup'][];
+		/** @description A list of vehicle model attributes */
+		VPICModelAttributesResponseBody: {
+			/** @description The code of the attribute */
+			code: string;
+			/** @description The name of the attribute */
+			name: string;
+			/** @description The description of the attribute */
+			description: string;
+			/** @description The values of the attribute */
+			values: {
+				/**
+				 * Format: int32
+				 * @description The unique identifier for a value
+				 */
+				id: number | null;
+				value: string | number;
+				/** @description The VIN schema identifiers */
+				vinSchemaIds: number[];
+			}[];
+		}[];
 		Lookup: {
 			/**
 			 * Format: int32
 			 * @description The unique identifier for a lookup
 			 */
-			id?: number;
+			id: number;
 			/** @description The name of the lookup */
-			name?: string;
+			name: string;
 		};
 		/** @description A Problem Details object (RFC 9457) */
 		Problem: {
@@ -304,6 +341,11 @@ export interface components {
 		 */
 		makeId: number;
 		/**
+		 * @description Vehicle model ID
+		 * @example 1
+		 */
+		modelId: number;
+		/**
 		 * @description Vehicle year
 		 * @example 2002
 		 */
@@ -317,15 +359,15 @@ export type $defs = Record<string, never>;
 export interface operations {
 	getVPICVin: {
 		parameters: {
-			query: {
+			query?: never;
+			header?: never;
+			path: {
 				/**
 				 * @description Vehicle Identification Number
 				 * @example 5TEWN72N82Z891171
 				 */
 				vin: components['parameters']['vin'];
 			};
-			header?: never;
-			path?: never;
 			cookie?: never;
 		};
 		requestBody?: never;
@@ -370,17 +412,17 @@ export interface operations {
 			500: components['responses']['500'];
 		};
 	};
-	getVPICMakesByYear: {
+	getVPICYearMakes: {
 		parameters: {
-			query: {
+			query?: never;
+			header?: never;
+			path: {
 				/**
 				 * @description Vehicle year
 				 * @example 2002
 				 */
 				year: components['parameters']['year'];
 			};
-			header?: never;
-			path?: never;
 			cookie?: never;
 		};
 		requestBody?: never;
@@ -399,22 +441,22 @@ export interface operations {
 			500: components['responses']['500'];
 		};
 	};
-	getVPICModelsByMakeIdAndYear: {
+	getVPICMYearMakeModels: {
 		parameters: {
-			query: {
-				/**
-				 * @description Vehicle make ID
-				 * @example 1
-				 */
-				makeId: components['parameters']['makeId'];
+			query?: never;
+			header?: never;
+			path: {
 				/**
 				 * @description Vehicle year
 				 * @example 2002
 				 */
 				year: components['parameters']['year'];
+				/**
+				 * @description Vehicle make ID
+				 * @example 1
+				 */
+				makeId: components['parameters']['makeId'];
 			};
-			header?: never;
-			path?: never;
 			cookie?: never;
 		};
 		requestBody?: never;
@@ -426,6 +468,40 @@ export interface operations {
 				};
 				content: {
 					'application/json': components['schemas']['VPICModelsResponseBody'];
+				};
+			};
+			401: components['responses']['401'];
+			403: components['responses']['403'];
+			500: components['responses']['500'];
+		};
+	};
+	getVPICModelAttributesByModelIdAndYear: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path: {
+				/**
+				 * @description Vehicle model ID
+				 * @example 1
+				 */
+				modelId: components['parameters']['modelId'];
+				/**
+				 * @description Vehicle year
+				 * @example 2002
+				 */
+				year: components['parameters']['year'];
+			};
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Vehicle attributes found */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['VPICModelAttributesResponseBody'];
 				};
 			};
 			401: components['responses']['401'];

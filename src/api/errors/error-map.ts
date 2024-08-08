@@ -5,6 +5,8 @@ import {
 	UnauthorizedError,
 } from 'express-oauth2-jwt-bearer';
 import { snakeCase } from 'lodash';
+import { ResourceNotFoundError } from 'src/domains/common/errors/resource-not-found.error';
+import { ElementLoadError } from 'src/domains/vpic/errors/element-load.error';
 import { SearchByVinError } from 'src/domains/vpic/errors/search-by-vin.error';
 
 type ErrorConfig = {
@@ -69,6 +71,12 @@ mapError(InvalidRequestError, 400, (error) => ({ headers: error.headers }));
 mapError(InvalidTokenError, 401, (error) => ({ headers: error.headers }));
 mapError(InsufficientScopeError, 401, (error) => ({ headers: error.headers }));
 mapError(UnauthorizedError, 401, (error) => ({ headers: error.headers }));
+
+// domains/common errors
+mapError(ResourceNotFoundError, 404, (error) => ({ data: error.data }));
+
+// domains/vpic errors
 mapError(SearchByVinError, 422, (error) => ({ data: error.data }));
+mapError(ElementLoadError, 422, (error) => ({ data: error.data }));
 
 export { getErrorMap };

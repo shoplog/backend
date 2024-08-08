@@ -8,8 +8,8 @@ interface AttributeQueryResult {
 	VinSchemaId: number;
 	Name: string;
 	Code: string;
-	DataType: string | null;
-	Description: string | null;
+	DataType: string;
+	Description: string;
 	LookupTable: string | null;
 }
 
@@ -29,32 +29,48 @@ export class ModelRepository implements IModelRepository {
 	}
 
 	async getModelAttributesByModelIdYear(id: number, year: number): Promise<AttributeQueryResult[]> {
-		const distinctModels = this.db
-			.selectFrom('Pattern as p')
-			.innerJoin('Element as e', 'e.Id', 'p.ElementId')
-			.innerJoin('Wmi_VinSchema as wvs', 'wvs.VinSchemaId', 'p.VinSchemaId')
-			.where('p.AttributeId', '=', id.toString())
-			.where('e.Id', '=', ModelElementId)
-			.where('wvs.YearFrom', '<=', year)
-			.where(sql`ISNULL(wvs.YearTo, 2999)`, '>=', year)
-			.select(['p.Id', 'p.AttributeId as ModelId', 'p.VinSchemaId'])
-			.distinct();
+		// const vinSchemaIds = await this.db
+		// 	.selectFrom('Pattern as p')
+		// 	.innerJoin('Element as e', 'e.Id', 'p.ElementId')
+		// 	.innerJoin('Wmi_VinSchema as wvs', 'wvs.VinSchemaId', 'p.VinSchemaId')
+		// 	.where('p.AttributeId', '=', id.toString())
+		// 	.where('e.Id', '=', ModelElementId)
+		// 	.where('wvs.YearFrom', '<=', year)
+		// 	.where(sql`ISNULL(wvs.YearTo, 2999)`, '>=', year)
+		// 	.select('p.VinSchemaId')
+		// 	.distinct()
+		// 	.execute();
 
 		const query = await this.db
-			.selectFrom(distinctModels.as('models'))
-			.innerJoin('Pattern as p', 'p.VinSchemaId', 'models.VinSchemaId')
+			.selectFrom('Pattern as p')
+			.innerJoin(
+				(eb) =>
+					eb
+						.selectFrom('Pattern as p')
+						.innerJoin('Element as e', 'e.Id', 'p.ElementId')
+						.innerJoin('Wmi_VinSchema as wvs', 'wvs.VinSchemaId', 'p.VinSchemaId')
+						.where('p.AttributeId', '=', id.toString())
+						.where('e.Id', '=', ModelElementId)
+						.where('wvs.YearFrom', '<=', year)
+						.where(sql`ISNULL(wvs.YearTo, 2999)`, '>=', year)
+						.select(['p.Id', 'p.AttributeId as ModelId', 'p.VinSchemaId'])
+						.distinct()
+						.as('distinctModels'),
+				(join) => join.onRef('distinctModels.VinSchemaId', '=', 'p.VinSchemaId')
+			)
 			.innerJoin('Element as e', 'e.Id', 'p.ElementId')
-			.orderBy('e.Code asc')
-			.orderBy('p.VinSchemaId asc')
-			.select(({ fn }) => [
-				fn.coalesce('e.Code').$notNull().as('Code'),
+
+			.select([
+				sql<string>`ISNULL(e.Code, '')`.as('Code'),
 				'e.Name',
-				'e.Description',
+				sql<string>`ISNULL(e.Description, '')`.as('Description'),
 				'p.AttributeId',
 				'e.LookupTable',
-				'e.DataType',
+				sql<string>`ISNULL(e.DataType, '')`.as('DataType'),
 				'p.VinSchemaId',
 			])
+			.orderBy('e.Code asc')
+			.orderBy('p.VinSchemaId asc')
 			.execute();
 
 		return query;

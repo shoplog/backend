@@ -1,3 +1,4 @@
+import { ILookupRepository } from 'src/data/vpic/repositories/lookup.repository';
 import { IMakeRepository } from 'src/data/vpic/repositories/make.repository';
 import { IModelRepository } from 'src/data/vpic/repositories/model.repository';
 import { IVinRepository, VehicleElements } from 'src/data/vpic/repositories/vin.repository';
@@ -53,7 +54,17 @@ describe('VPICService', () => {
 				getModel: jest.fn(),
 			};
 
-			const service = new VPICService(vinRepositoryMock, yearRepositoryMock, makeRepositoryMock, modelRepositoryMock);
+			const lookupRepositoryMock: ILookupRepository = {
+				getLookup: jest.fn(),
+			};
+
+			const service = new VPICService(
+				vinRepositoryMock,
+				yearRepositoryMock,
+				makeRepositoryMock,
+				modelRepositoryMock,
+				lookupRepositoryMock
+			);
 
 			// act
 			const result = await service.searchByVin(vin);
@@ -88,7 +99,17 @@ describe('VPICService', () => {
 				getModel: jest.fn(),
 			};
 
-			const service = new VPICService(vinRepositoryMock, yearRepositoryMock, makeRepositoryMock, modelRepositoryMock);
+			const lookupRepositoryMock: ILookupRepository = {
+				getLookup: jest.fn(),
+			};
+
+			const service = new VPICService(
+				vinRepositoryMock,
+				yearRepositoryMock,
+				makeRepositoryMock,
+				modelRepositoryMock,
+				lookupRepositoryMock
+			);
 
 			// act
 			const result = await service.getAllSupportedYears();
@@ -138,7 +159,18 @@ describe('VPICService', () => {
 				getModelAttributesByModelIdYear: jest.fn(),
 				getModel: jest.fn(),
 			};
-			const service = new VPICService(vinRepositoryMock, yearRepositoryMock, makeRepositoryMock, modelRepositoryMock);
+
+			const lookupRepositoryMock: ILookupRepository = {
+				getLookup: jest.fn(),
+			};
+
+			const service = new VPICService(
+				vinRepositoryMock,
+				yearRepositoryMock,
+				makeRepositoryMock,
+				modelRepositoryMock,
+				lookupRepositoryMock
+			);
 
 			// act
 			const result = await service.getMakesByYear(2002);
@@ -193,7 +225,17 @@ describe('VPICService', () => {
 				getModelAttributesByModelIdYear: () => Promise.resolve([]),
 			};
 
-			const service = new VPICService(vinRepositoryMock, yearRepositoryMock, makeRepositoryMock, modelRepositoryMock);
+			const lookupRepositoryMock: ILookupRepository = {
+				getLookup: jest.fn(),
+			};
+
+			const service = new VPICService(
+				vinRepositoryMock,
+				yearRepositoryMock,
+				makeRepositoryMock,
+				modelRepositoryMock,
+				lookupRepositoryMock
+			);
 
 			// act
 			const result = await service.getModelsByMakeIdAndYear(1, 2022);

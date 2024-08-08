@@ -48,3 +48,4 @@ export const VPICDatabase = new Kysely<vPICList_Lite1>({
 });
 
 export type VPICDatabase = typeof VPICDatabase;
+export type VPICTables = keyof vPICList_Lite1;

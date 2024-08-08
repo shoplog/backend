@@ -47,6 +47,9 @@ importers:
       pino-pretty:
         specifier: 11.2.2
         version: 11.2.2
+      string-strip-html:
+        specifier: 8.5.0
+        version: 8.5.0
       tarn:
         specifier: 3.0.2
         version: 3.0.2
@@ -5203,6 +5206,10 @@ packages:
   string-length@4.0.2:
     resolution: {integrity: sha512-+l6rNN5fYHNhZZy41RXsYptCjA2Igmq4EG7kZAYFQI1E1VTXarr6ZPXBg6eq7Y6eK4FEhY6AJlyuFIb/v/S0VQ==}
     engines: {node: '>=10'}
+
+  string-strip-html@8.5.0:
+    resolution: {integrity: sha512-5ICsK1B1j0A3AF1d45m0sqQCcmi1Q+t1QpF+b794LO5FTHV+ITkGR5C+UCDJQZgs5LMuRruqr6j48PxQVIurJQ==}
+    engines: {node: '>=14'}
 
   string-width@4.2.3:
     resolution: {integrity: sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==}
@@ -12131,6 +12138,8 @@ snapshots:
     dependencies:
       char-regex: 1.0.2
       strip-ansi: 6.0.1
+
+  string-strip-html@8.5.0: {}
 
   string-width@4.2.3:
     dependencies:

@@ -29,6 +29,7 @@
 		"pino": "9.3.2",
 		"pino-http": "10.2.0",
 		"pino-pretty": "11.2.2",
+		"string-strip-html": "8.5.0",
 		"tarn": "3.0.2",
 		"tedious": "18.3.0"
 	},

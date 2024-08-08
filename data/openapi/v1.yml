@@ -9,8 +9,8 @@ servers:
   - url: https://unknown.com/api/v1
     description: Production
 tags:
-  - name: Vehicles
-    description: Vehicle operations
+  - name: VPIC
+    description: API endpoints for the Vehicle Product Information Catalog
 paths:
   /:
     get:
@@ -29,7 +29,7 @@ paths:
                     example: up
         '500':
           $ref: '#/components/responses/500'
-  /vpic/vin:
+  /vpic/vin/{vin}:
     get:
       summary: Search for a vehicle by VIN
       operationId: getVPICVin
@@ -73,10 +73,10 @@ paths:
           $ref: '#/components/responses/403'
         '500':
           $ref: '#/components/responses/500'
-  /vpic/makes:
+  /vpic/years/{year}/makes:
     get:
       summary: Get a list of supported vehicle makes by year
-      operationId: getVPICMakesByYear
+      operationId: getVPICYearMakes
       tags: ['VPIC']
       parameters:
         - $ref: '#/components/parameters/year'
@@ -93,14 +93,14 @@ paths:
           $ref: '#/components/responses/403'
         '500':
           $ref: '#/components/responses/500'
-  /vpic/models:
+  /vpic/makes/{makeId}/year/{year}/models:
     get:
       summary: Get a list of supported vehicle models by make and year
-      operationId: getVPICModelsByMakeIdAndYear
+      operationId: getVPICMYearMakeModels
       tags: ['VPIC']
       parameters:
-        - $ref: '#/components/parameters/makeId'
         - $ref: '#/components/parameters/year'
+        - $ref: '#/components/parameters/makeId'
       responses:
         '200':
           description: Vehicle models found
@@ -114,11 +114,32 @@ paths:
           $ref: '#/components/responses/403'
         '500':
           $ref: '#/components/responses/500'
+  /vpic/models/{modelId}/year/{year}/attributes:
+    get:
+      summary: Get a list of supported vehicle attributes by model ID and year
+      operationId: getVPICModelAttributesByModelIdAndYear
+      tags: ['VPIC']
+      parameters:
+        - $ref: '#/components/parameters/modelId'
+        - $ref: '#/components/parameters/year'
+      responses:
+        '200':
+          description: Vehicle attributes found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VPICModelAttributesResponseBody'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
 components:
   parameters:
     vin:
       name: vin
-      in: query
+      in: path
       description: Vehicle Identification Number
       required: true
       schema:
@@ -128,8 +149,17 @@ components:
       example: 5TEWN72N82Z891171
     makeId:
       name: makeId
-      in: query
+      in: path
       description: Vehicle make ID
+      required: true
+      schema:
+        type: integer
+        format: int32
+      example: 1
+    modelId:
+      name: modelId
+      in: path
+      description: Vehicle model ID
       required: true
       schema:
         type: integer
@@ -137,7 +167,7 @@ components:
       example: 1
     year:
       name: year
-      in: query
+      in: path
       description: Vehicle year
       required: true
       schema:
@@ -185,6 +215,14 @@ components:
     VPICVinResponseBody:
       description: 'A vehicle search result'
       type: object
+      additionalProperties: false
+      required:
+        - vin
+        - makeId
+        - make
+        - modelId
+        - model
+        - year
       properties:
         vin:
           type: string
@@ -225,8 +263,9 @@ components:
               - type: string
               - type: number
     VPICYearsResponseBody:
-      description: 'A list of vehicle years'
       type: array
+      description: 'A list of vehicle years'
+      additionalProperties: false
       items:
         type: integer
         format: int32
@@ -241,8 +280,61 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Lookup'
+    VPICModelAttributesResponseBody:
+      description: 'A list of vehicle model attributes'
+      type: array
+      items:
+        type: object
+        description: Vehicle model attribute
+        additionalProperties: false
+        required:
+          - code
+          - name
+          - description
+          - values
+        properties:
+          code:
+            type: string
+            description: The code of the attribute
+          name:
+            type: string
+            description: The name of the attribute
+          description:
+            type: string
+            description: The description of the attribute
+          values:
+            type: array
+            description: The values of the attribute
+            items:
+              type: object
+              description: The value of the attribute
+              additionalProperties: false
+              required:
+                - id
+                - value
+                - vinSchemaIds
+              properties:
+                id:
+                  type: integer
+                  nullable: true
+                  format: int32
+                  description: The unique identifier for a value
+                value:
+                  anyOf:
+                    - type: string
+                    - type: number
+                vinSchemaIds:
+                  type: array
+                  description: The VIN schema identifiers
+                  items:
+                    type: integer
+                    format: int32
     Lookup:
       type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
       properties:
         id:
           type: integer

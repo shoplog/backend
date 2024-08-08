@@ -1,19 +1,23 @@
 import { camelCase, capitalize } from 'lodash';
+import { ILookupRepository } from 'src/data/vpic/repositories/lookup.repository';
 import { IMakeRepository } from 'src/data/vpic/repositories/make.repository';
 import { IModelRepository } from 'src/data/vpic/repositories/model.repository';
 import { IVinRepository, VehicleElements } from 'src/data/vpic/repositories/vin.repository';
 import { IYearRepository } from 'src/data/vpic/repositories/year.repository';
+import { ResourceNotFoundError } from 'src/domains/common/errors/resource-not-found.error';
+import { ElementLoadError } from 'src/domains/vpic/errors/element-load.error';
 import { SearchByVinError } from 'src/domains/vpic/errors/search-by-vin.error';
 import { toLookupDto } from 'src/domains/vpic/utils/map';
+import { stripHtml } from 'string-strip-html';
 
 export type SearchByVinResultDto = {
-	vin?: string;
+	vin: string;
 	suggestedVin?: string;
-	makeId?: number;
-	make?: string;
-	modelId?: number;
-	model?: string;
-	year?: number;
+	makeId: number;
+	make: string;
+	modelId: number;
+	model: string;
+	year: number;
 	attributes?: {
 		[key: string]: string | number;
 	};
@@ -24,11 +28,23 @@ export type LookupDto = {
 	name: string;
 };
 
+export type ModelAttributeDto = {
+	code: string;
+	name: string;
+	description: string;
+	values: {
+		id: number | null;
+		value: string | number;
+		vinSchemaIds: number[];
+	}[];
+};
+
 export interface IVPICService {
 	searchByVin(vin: string): Promise<SearchByVinResultDto | undefined>;
 	getAllSupportedYears(): Promise<number[]>;
 	getMakesByYear(year: number): Promise<LookupDto[]>;
 	getModelsByMakeIdAndYear(makeId: number, year: number): Promise<LookupDto[]>;
+	getModelAttributesByIdAndYear(modelId: number, year: number): Promise<ModelAttributeDto[]>;
 }
 
 export class VPICService implements IVPICService {
@@ -36,8 +52,97 @@ export class VPICService implements IVPICService {
 		readonly vinRepository: IVinRepository,
 		readonly yearRepository: IYearRepository,
 		readonly makeRepository: IMakeRepository,
-		readonly modelRepository: IModelRepository
+		readonly modelRepository: IModelRepository,
+		readonly lookupRepository: ILookupRepository
 	) {}
+
+	async getModelAttributesByIdAndYear(modelId: number, year: number): Promise<ModelAttributeDto[]> {
+		const model = this.modelRepository.getModel(modelId);
+
+		if (!model) {
+			throw new ResourceNotFoundError('Model', { modelId });
+		}
+
+		type Code = {
+			Name: string;
+			LookupTable: string | null;
+			DataType: string;
+			Description: string;
+			Values: Map<string | number, Set<number>>;
+		};
+
+		const attributes = await this.modelRepository.getModelAttributesByModelIdYear(modelId, year);
+		const attributesMap = attributes.reduce((acc, currentValue) => {
+			const { Code, Name, Description, AttributeId, DataType, LookupTable, VinSchemaId } = currentValue;
+			const code = acc.get(Code);
+
+			if (!code) {
+				acc.set(Code, {
+					Name,
+					Description,
+					DataType,
+					LookupTable,
+					Values: new Map([[AttributeId, new Set([VinSchemaId])]]),
+				});
+			} else {
+				const attribute = code.Values.get(AttributeId);
+
+				if (!attribute) {
+					code.Values.set(AttributeId, new Set([VinSchemaId]));
+				} else {
+					attribute.add(VinSchemaId);
+				}
+			}
+
+			return acc;
+		}, new Map<string, Code>());
+
+		return await Promise.all(
+			Array.from(attributesMap, async ([code, element]) => {
+				const modelAttribute: ModelAttributeDto = {
+					code: camelCase(code),
+					name: element.Name,
+					description: stripHtml(element.Description).result,
+					values: await Promise.all(
+						Array.from(element.Values, async ([key, vinSchemaIdSet]) => {
+							let value: string | number;
+							let id: number | null = null;
+
+							if (element.DataType === 'int' || element.DataType === 'decimal') {
+								value = Number(key);
+							} else if (element.DataType === 'string') {
+								value = key;
+							} else if (element.DataType === 'lookup' && element.LookupTable) {
+								id = Number(key);
+
+								const lookup = await this.lookupRepository.getLookup(id, element.LookupTable);
+
+								if (lookup) {
+									value = lookup.Name;
+								} else {
+									value = '';
+								}
+							} else {
+								value = '';
+							}
+
+							if (!value) {
+								throw new ElementLoadError(code, { element });
+							}
+
+							return {
+								id,
+								value,
+								vinSchemaIds: Array.from(vinSchemaIdSet),
+							};
+						})
+					),
+				};
+
+				return modelAttribute;
+			})
+		);
+	}
 
 	async searchByVin(vin: string): Promise<SearchByVinResultDto> {
 		const vehicleElements = await this.vinRepository.vinDecode(vin);
