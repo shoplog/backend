@@ -31,6 +31,8 @@ const dialect = new MssqlDialect({
 					database: CONFIG.mssql.database,
 					port: 1433,
 					trustServerCertificate: true,
+					isolationLevel: tedious.ISOLATION_LEVEL.READ_UNCOMMITTED,
+					readOnlyIntent: true,
 				},
 				server: CONFIG.mssql.host,
 			}),
