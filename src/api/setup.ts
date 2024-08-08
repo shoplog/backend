@@ -10,7 +10,7 @@ import pinoHttp from 'pino-http';
 import { OPEN_API_SPEC_FILE_PATH } from 'src/api/constants/files';
 import { CUSTOM_HEADERS } from 'src/api/constants/headers';
 import { errorHandlerMiddleware } from 'src/api/middlewares';
-import { createVPICRoutes } from 'src/api/routes/vpic.route';
+import { createVPICRoutes } from 'src/api/routes/vpic.routes';
 import { logger } from 'src/common/initializers/logger';
 
 export const loadOpenApiSpec = async (): Promise<OpenAPIV3.Document> => {

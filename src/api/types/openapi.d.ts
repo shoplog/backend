@@ -81,6 +81,23 @@ export interface paths {
 		patch?: never;
 		trace?: never;
 	};
+	'/vpic/makes': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/** Get a list of supported vehicle makes by year */
+		get: operations['getVPICMakes'];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -139,6 +156,17 @@ export interface components {
 		 *     ]
 		 */
 		VPICYearsResponseBody: number[];
+		/** @description A list of vehicle makes */
+		VPICMakesResponseBody: components['schemas']['Lookup'][];
+		Lookup: {
+			/**
+			 * Format: int32
+			 * @description The unique identifier for a lookup
+			 */
+			id?: number;
+			/** @description The name of the lookup */
+			name?: string;
+		};
 		/** @description A Problem Details object (RFC 9457) */
 		Problem: {
 			/**
@@ -251,6 +279,11 @@ export interface components {
 		 * @example 5TEWN72N82Z891171
 		 */
 		vin: string;
+		/**
+		 * @description Vehicle year
+		 * @example 2002
+		 */
+		year: number;
 	};
 	requestBodies: never;
 	headers: never;
@@ -306,6 +339,35 @@ export interface operations {
 				};
 				content: {
 					'application/json': components['schemas']['VPICYearsResponseBody'];
+				};
+			};
+			401: components['responses']['401'];
+			403: components['responses']['403'];
+			500: components['responses']['500'];
+		};
+	};
+	getVPICMakes: {
+		parameters: {
+			query: {
+				/**
+				 * @description Vehicle year
+				 * @example 2002
+				 */
+				year: components['parameters']['year'];
+			};
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Vehicle makes found */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['VPICMakesResponseBody'];
 				};
 			};
 			401: components['responses']['401'];

@@ -1,7 +1,9 @@
 import { camelCase, capitalize } from 'lodash';
+import { IMakeRepository } from 'src/data/vpic/repositories/make.repository';
 import { IVinRepository, VehicleElements } from 'src/data/vpic/repositories/vin.repository';
 import { IYearRepository } from 'src/data/vpic/repositories/year.repository';
 import { SearchByVinError } from 'src/domains/vpic/errors/search-by-vin.error';
+import { toLookupDto } from 'src/domains/vpic/utils/map';
 
 export type SearchByVinResultDto = {
 	vin?: string;
@@ -16,15 +18,22 @@ export type SearchByVinResultDto = {
 	};
 };
 
+export type LookupDto = {
+	id: number;
+	name: string;
+};
+
 export interface IVPICService {
 	searchByVin(vin: string): Promise<SearchByVinResultDto | undefined>;
 	getAllSupportedYears(): Promise<number[]>;
+	getMakesByYear(year: number): Promise<LookupDto[]>;
 }
 
 export class VPICService implements IVPICService {
 	constructor(
 		readonly vinRepository: IVinRepository,
-		readonly yearRepository: IYearRepository
+		readonly yearRepository: IYearRepository,
+		readonly makeRepository: IMakeRepository
 	) {}
 
 	async searchByVin(vin: string): Promise<SearchByVinResultDto> {
@@ -92,5 +101,11 @@ export class VPICService implements IVPICService {
 
 	async getAllSupportedYears(): Promise<number[]> {
 		return await this.yearRepository.getAllYears();
+	}
+
+	async getMakesByYear(year: number): Promise<LookupDto[]> {
+		const makes = await this.makeRepository.getMakesByYear(year);
+
+		return makes.map(toLookupDto);
 	}
 }

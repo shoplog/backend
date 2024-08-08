@@ -1,6 +1,8 @@
+import { IMakeRepository } from 'src/data/vpic/repositories/make.repository';
 import { IVinRepository, VehicleElements } from 'src/data/vpic/repositories/vin.repository';
 import { IYearRepository } from 'src/data/vpic/repositories/year.repository';
-import { SearchByVinResultDto, VPICService } from 'src/domains/vpic/services/vpic.service';
+import { SelectableLookup } from 'src/data/vpic/types/common';
+import { LookupDto, SearchByVinResultDto, VPICService } from 'src/domains/vpic/services/vpic.service';
 
 describe('VPICService', () => {
 	describe('searchByVin()', () => {
@@ -32,7 +34,7 @@ describe('VPICService', () => {
 				})
 			);
 
-			const searchRepositoryMock: IVinRepository = {
+			const vinRepositoryMock: IVinRepository = {
 				vinDecode: searchByVin,
 			};
 
@@ -40,7 +42,11 @@ describe('VPICService', () => {
 				getAllYears: jest.fn(),
 			};
 
-			const service = new VPICService(searchRepositoryMock, yearRepositoryMock);
+			const makeRepositoryMock: IMakeRepository = {
+				getMakesByYear: jest.fn(),
+			};
+
+			const service = new VPICService(vinRepositoryMock, yearRepositoryMock, makeRepositoryMock);
 
 			// act
 			const result = await service.searchByVin(vin);
@@ -57,7 +63,7 @@ describe('VPICService', () => {
 
 			const getAllYears = jest.fn(() => Promise.resolve(expectedYears));
 
-			const searchRepositoryMock: IVinRepository = {
+			const vinRepositoryMock: IVinRepository = {
 				vinDecode: jest.fn(),
 			};
 
@@ -65,13 +71,62 @@ describe('VPICService', () => {
 				getAllYears,
 			};
 
-			const service = new VPICService(searchRepositoryMock, yearRepositoryMock);
+			const makeRepositoryMock: IMakeRepository = {
+				getMakesByYear: jest.fn(),
+			};
+
+			const service = new VPICService(vinRepositoryMock, yearRepositoryMock, makeRepositoryMock);
 
 			// act
 			const result = await service.getAllSupportedYears();
 
 			// assert
 			expect(result).toEqual(expectedYears);
+		});
+	});
+
+	describe('getMakesByYear()', () => {
+		it('should return makes by year', async () => {
+			// arrange
+			const expectedMakes: LookupDto[] = [
+				{
+					id: 1,
+					name: 'Toyota',
+				},
+				{
+					id: 2,
+					name: 'Lexus',
+				},
+			];
+
+			const getMakesByYear = jest.fn(() =>
+				Promise.resolve<SelectableLookup[]>([
+					{
+						Id: 1,
+						Name: 'Toyota',
+					},
+					{
+						Id: 2,
+						Name: 'Lexus',
+					},
+				])
+			);
+			const vinRepositoryMock: IVinRepository = {
+				vinDecode: jest.fn(),
+			};
+
+			const yearRepositoryMock: IYearRepository = {
+				getAllYears: jest.fn(),
+			};
+
+			const makeRepositoryMock: IMakeRepository = { getMakesByYear };
+			const service = new VPICService(vinRepositoryMock, yearRepositoryMock, makeRepositoryMock);
+
+			// act
+			const result = await service.getMakesByYear(2002);
+
+			// assert
+			expect(result).toMatchObject(expectedMakes);
 		});
 	});
 });
