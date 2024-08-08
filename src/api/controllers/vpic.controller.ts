@@ -14,7 +14,15 @@ export type VPICModelAttributesRequest = Request<
 >;
 export type VPICModelAttributesResponseBody = components['schemas']['VPICModelAttributesResponseBody'];
 
-export class VPICController {
+export interface IVPICController {
+	searchByVin(req: VPICVinRequest, res: Response<VPICVinResponseBody>): Promise<void>;
+	getYears(req: Request, res: Response<VPICYearsResponseBody>): Promise<void>;
+	getMakes(req: VPICMakesRequest, res: Response<VPICMakesByYearResponseBody>): Promise<void>;
+	getModels(req: VPICModelsRequest, res: Response<VPICModelsResponseBody>): Promise<void>;
+	getModelAttributes(req: VPICModelAttributesRequest, res: Response<VPICModelAttributesResponseBody>): Promise<void>;
+}
+
+export class VPICController implements IVPICController {
 	constructor(readonly VPICService: IVPICService) {}
 
 	async searchByVin(req: VPICVinRequest, res: Response<VPICVinResponseBody>) {
