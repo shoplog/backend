@@ -1,4 +1,4 @@
-import { auth } from 'express-oauth2-jwt-bearer';
+import { auth, requiredScopes } from 'express-oauth2-jwt-bearer';
 import { CONFIG } from 'src/common/config/env';
 
 const { audience, issuerBaseURL } = CONFIG.auth0;
@@ -9,3 +9,5 @@ export const checkJwt = auth({
 	audience,
 	issuerBaseURL,
 });
+
+export const checkScopes = (scopes: string | string[]) => requiredScopes(scopes);
