@@ -76,7 +76,7 @@ paths:
   /vpic/makes:
     get:
       summary: Get a list of supported vehicle makes by year
-      operationId: getVPICMakes
+      operationId: getVPICMakesByYear
       tags: ['VPIC']
       parameters:
         - $ref: '#/components/parameters/year'
@@ -87,6 +87,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/VPICMakesResponseBody'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '500':
+          $ref: '#/components/responses/500'
+  /vpic/models:
+    get:
+      summary: Get a list of supported vehicle models by make and year
+      operationId: getVPICModelsByMakeIdAndYear
+      tags: ['VPIC']
+      parameters:
+        - $ref: '#/components/parameters/makeId'
+        - $ref: '#/components/parameters/year'
+      responses:
+        '200':
+          description: Vehicle models found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VPICModelsResponseBody'
         '401':
           $ref: '#/components/responses/401'
         '403':
@@ -105,6 +126,15 @@ components:
         minLength: 17
         maxLength: 17
       example: 5TEWN72N82Z891171
+    makeId:
+      name: makeId
+      in: query
+      description: Vehicle make ID
+      required: true
+      schema:
+        type: integer
+        format: int32
+      example: 1
     year:
       name: year
       in: query
@@ -203,6 +233,11 @@ components:
       example: [2000, 2001, 2002]
     VPICMakesResponseBody:
       description: 'A list of vehicle makes'
+      type: array
+      items:
+        $ref: '#/components/schemas/Lookup'
+    VPICModelsResponseBody:
+      description: 'A list of vehicle models'
       type: array
       items:
         $ref: '#/components/schemas/Lookup'

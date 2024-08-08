@@ -1,0 +1,82 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GET /vpic/models should respond with 200 Ok - all models for make and year 1`] = `
+[
+  {
+    "id": 2216,
+    "name": "4-Runner",
+  },
+  {
+    "id": 2465,
+    "name": "Avalon",
+  },
+  {
+    "id": 2469,
+    "name": "Camry",
+  },
+  {
+    "id": 2803,
+    "name": "Camry Solara",
+  },
+  {
+    "id": 3645,
+    "name": "Celica",
+  },
+  {
+    "id": 2208,
+    "name": "Corolla",
+  },
+  {
+    "id": 3650,
+    "name": "Echo",
+  },
+  {
+    "id": 2234,
+    "name": "Forester",
+  },
+  {
+    "id": 2213,
+    "name": "Highlander",
+  },
+  {
+    "id": 2235,
+    "name": "Impreza",
+  },
+  {
+    "id": 2211,
+    "name": "Land Cruiser",
+  },
+  {
+    "id": 3648,
+    "name": "MR2",
+  },
+  {
+    "id": 3649,
+    "name": "Paseo",
+  },
+  {
+    "id": 2209,
+    "name": "Prius",
+  },
+  {
+    "id": 2217,
+    "name": "RAV4",
+  },
+  {
+    "id": 2827,
+    "name": "Sequoia",
+  },
+  {
+    "id": 2468,
+    "name": "Sienna",
+  },
+  {
+    "id": 2223,
+    "name": "Tacoma",
+  },
+  {
+    "id": 2467,
+    "name": "Tundra",
+  },
+]
+`;

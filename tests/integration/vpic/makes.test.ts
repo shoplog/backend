@@ -25,4 +25,18 @@ describe('GET /vpic/makes', () => {
 		// Assert
 		expect(body).toMatchSnapshot();
 	});
+
+	it('should respond with 400 - year not in parameter', async () => {
+		// Arrange
+		// Act
+		const body = await supertest(app)
+			.get(`${resourceUrl}?year=`)
+			.expect(400)
+			.then((res) => res.body);
+
+		// Assert
+		expect(body).toMatchObject({
+			status: 400,
+		});
+	});
 });

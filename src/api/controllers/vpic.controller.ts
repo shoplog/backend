@@ -7,6 +7,8 @@ export type VPICVinResponseBody = components['schemas']['VPICVinResponseBody'];
 export type VPICYearsResponseBody = components['schemas']['VPICYearsResponseBody'];
 export type VPICMakesRequest = Request<unknown, unknown, unknown, paths['/vpic/makes']['get']['parameters']['query']>;
 export type VPICMakesByYearResponseBody = components['schemas']['VPICMakesResponseBody'];
+export type VPICModelsRequest = Request<unknown, unknown, unknown, paths['/vpic/models']['get']['parameters']['query']>;
+export type VPICModelsResponseBody = components['schemas']['VPICModelsResponseBody'];
 
 export class VPICController {
 	constructor(readonly VPICService: IVPICService) {}
@@ -27,5 +29,12 @@ export class VPICController {
 		const makes = await this.VPICService.getMakesByYear(req.query.year);
 
 		res.json(makes);
+	}
+
+	async getModels(req: VPICModelsRequest, res: Response<VPICModelsResponseBody>) {
+		const { makeId, year } = req.query;
+		const models = await this.VPICService.getModelsByMakeIdAndYear(makeId, year);
+
+		res.json(models);
 	}
 }

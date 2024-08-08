@@ -89,7 +89,24 @@ export interface paths {
 			cookie?: never;
 		};
 		/** Get a list of supported vehicle makes by year */
-		get: operations['getVPICMakes'];
+		get: operations['getVPICMakesByYear'];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
+	'/vpic/models': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/** Get a list of supported vehicle models by make and year */
+		get: operations['getVPICModelsByMakeIdAndYear'];
 		put?: never;
 		post?: never;
 		delete?: never;
@@ -158,6 +175,8 @@ export interface components {
 		VPICYearsResponseBody: number[];
 		/** @description A list of vehicle makes */
 		VPICMakesResponseBody: components['schemas']['Lookup'][];
+		/** @description A list of vehicle models */
+		VPICModelsResponseBody: components['schemas']['Lookup'][];
 		Lookup: {
 			/**
 			 * Format: int32
@@ -280,6 +299,11 @@ export interface components {
 		 */
 		vin: string;
 		/**
+		 * @description Vehicle make ID
+		 * @example 1
+		 */
+		makeId: number;
+		/**
 		 * @description Vehicle year
 		 * @example 2002
 		 */
@@ -346,7 +370,7 @@ export interface operations {
 			500: components['responses']['500'];
 		};
 	};
-	getVPICMakes: {
+	getVPICMakesByYear: {
 		parameters: {
 			query: {
 				/**
@@ -368,6 +392,40 @@ export interface operations {
 				};
 				content: {
 					'application/json': components['schemas']['VPICMakesResponseBody'];
+				};
+			};
+			401: components['responses']['401'];
+			403: components['responses']['403'];
+			500: components['responses']['500'];
+		};
+	};
+	getVPICModelsByMakeIdAndYear: {
+		parameters: {
+			query: {
+				/**
+				 * @description Vehicle make ID
+				 * @example 1
+				 */
+				makeId: components['parameters']['makeId'];
+				/**
+				 * @description Vehicle year
+				 * @example 2002
+				 */
+				year: components['parameters']['year'];
+			};
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Vehicle models found */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['VPICModelsResponseBody'];
 				};
 			};
 			401: components['responses']['401'];

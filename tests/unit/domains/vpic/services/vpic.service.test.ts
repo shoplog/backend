@@ -1,4 +1,5 @@
 import { IMakeRepository } from 'src/data/vpic/repositories/make.repository';
+import { IModelRepository } from 'src/data/vpic/repositories/model.repository';
 import { IVinRepository, VehicleElements } from 'src/data/vpic/repositories/vin.repository';
 import { IYearRepository } from 'src/data/vpic/repositories/year.repository';
 import { SelectableLookup } from 'src/data/vpic/types/common';
@@ -46,7 +47,13 @@ describe('VPICService', () => {
 				getMakesByYear: jest.fn(),
 			};
 
-			const service = new VPICService(vinRepositoryMock, yearRepositoryMock, makeRepositoryMock);
+			const modelRepositoryMock: IModelRepository = {
+				getModelsByMakeYear: jest.fn(),
+				getModelAttributesByModelIdYear: jest.fn(),
+				getModel: jest.fn(),
+			};
+
+			const service = new VPICService(vinRepositoryMock, yearRepositoryMock, makeRepositoryMock, modelRepositoryMock);
 
 			// act
 			const result = await service.searchByVin(vin);
@@ -75,7 +82,13 @@ describe('VPICService', () => {
 				getMakesByYear: jest.fn(),
 			};
 
-			const service = new VPICService(vinRepositoryMock, yearRepositoryMock, makeRepositoryMock);
+			const modelRepositoryMock: IModelRepository = {
+				getModelsByMakeYear: jest.fn(),
+				getModelAttributesByModelIdYear: jest.fn(),
+				getModel: jest.fn(),
+			};
+
+			const service = new VPICService(vinRepositoryMock, yearRepositoryMock, makeRepositoryMock, modelRepositoryMock);
 
 			// act
 			const result = await service.getAllSupportedYears();
@@ -120,13 +133,73 @@ describe('VPICService', () => {
 			};
 
 			const makeRepositoryMock: IMakeRepository = { getMakesByYear };
-			const service = new VPICService(vinRepositoryMock, yearRepositoryMock, makeRepositoryMock);
+			const modelRepositoryMock: IModelRepository = {
+				getModelsByMakeYear: jest.fn(),
+				getModelAttributesByModelIdYear: jest.fn(),
+				getModel: jest.fn(),
+			};
+			const service = new VPICService(vinRepositoryMock, yearRepositoryMock, makeRepositoryMock, modelRepositoryMock);
 
 			// act
 			const result = await service.getMakesByYear(2002);
 
 			// assert
 			expect(result).toMatchObject(expectedMakes);
+		});
+	});
+
+	describe('getModelsByMakeIdAndYear()', () => {
+		it('should return models by make and year', async () => {
+			// arrange
+			const expectedModels = [
+				{
+					id: 1,
+					name: 'Corolla',
+				},
+				{
+					id: 2,
+					name: 'Camry',
+				},
+			];
+
+			const getModelsByMakeYear = jest.fn(() =>
+				Promise.resolve<SelectableLookup[]>([
+					{
+						Id: 1,
+						Name: 'Corolla',
+					},
+					{
+						Id: 2,
+						Name: 'Camry',
+					},
+				])
+			);
+
+			const vinRepositoryMock: IVinRepository = {
+				vinDecode: jest.fn(),
+			};
+
+			const yearRepositoryMock: IYearRepository = {
+				getAllYears: jest.fn(),
+			};
+
+			const makeRepositoryMock: IMakeRepository = {
+				getMakesByYear: jest.fn(),
+			};
+
+			const modelRepositoryMock: IModelRepository = {
+				getModelsByMakeYear,
+				getModel: () => Promise.resolve(undefined),
+				getModelAttributesByModelIdYear: () => Promise.resolve([]),
+			};
+
+			const service = new VPICService(vinRepositoryMock, yearRepositoryMock, makeRepositoryMock, modelRepositoryMock);
+
+			// act
+			const result = await service.getModelsByMakeIdAndYear(1, 2022);
+
+			// assert
+			expect(result).toMatchObject(expectedModels);
 		});
 	});
 });
