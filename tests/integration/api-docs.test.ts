@@ -1,12 +1,12 @@
 import { Express } from 'express';
-import { createApp } from 'src/api/setup';
 import supertest from 'supertest';
+import { createTestApp } from 'tests/utils/app';
 
 describe('GET /docs', () => {
 	let app: Express;
 
 	beforeAll(async () => {
-		app = await createApp();
+		app = await createTestApp();
 	});
 
 	it('should return 200 OK', async () => {

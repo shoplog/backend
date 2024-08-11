@@ -1,13 +1,13 @@
 import { Express } from 'express';
 import { CUSTOM_HEADERS } from 'src/api/constants/headers';
-import { createApp } from 'src/api/setup';
 import supertest from 'supertest';
+import { createTestApp } from 'tests/utils/app';
 
 describe('GET /', () => {
 	let app: Express;
 
 	beforeAll(async () => {
-		app = await createApp();
+		app = await createTestApp();
 	});
 
 	it('should return 200 OK', async () => {

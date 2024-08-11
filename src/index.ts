@@ -1,10 +1,14 @@
+import { loadDependencies } from 'src/api/global';
 import { createApp } from 'src/api/setup';
 import { CONFIG } from 'src/common/config/env';
 import { logger } from 'src/common/initializers/logger';
+import { MainDatabase } from 'src/data/main/database';
+import { VPICDatabase } from 'src/data/vpic/database';
 
 async function main() {
 	const port = CONFIG.server.port;
-	const app = await createApp();
+	const dependencies = loadDependencies(VPICDatabase, MainDatabase);
+	const app = await createApp(dependencies);
 
 	app.listen(port, () => {
 		logger.info(`Server is listening on http://localhost:${port}`);

@@ -1,9 +1,9 @@
 import { Express } from 'express';
 import { snakeCase } from 'lodash';
 import { VPICVinResponseBody } from 'src/api/controllers/vpic.controller';
-import { createApp } from 'src/api/setup';
 import { SearchByVinError } from 'src/domains/vpic/errors/search-by-vin.error';
 import supertest from 'supertest';
+import { createTestApp } from 'tests/utils/app';
 import { createJwt } from 'tests/utils/jwt';
 
 describe('/vpic/vin', () => {
@@ -12,7 +12,7 @@ describe('/vpic/vin', () => {
 	let bearerToken: string;
 
 	beforeAll(async () => {
-		app = await createApp();
+		app = await createTestApp();
 	});
 
 	beforeEach(async () => {

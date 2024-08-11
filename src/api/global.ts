@@ -1,4 +1,5 @@
 import { VPICController } from 'src/api/controllers/vpic.controller';
+import { MainDatabase } from 'src/data/main/database';
 import { VPICDatabase } from 'src/data/vpic/database';
 import {
 	LookupRepository,
@@ -9,12 +10,20 @@ import {
 } from 'src/data/vpic/repositories';
 import { VPICService } from 'src/domains/vpic/services/vpic.service';
 
-const vinRepository = new VinRepository(VPICDatabase);
-const yearRepository = new YearRepository(VPICDatabase);
-const makeRepository = new MakeRepository(VPICDatabase);
-const modelRepository = new ModelRepository(VPICDatabase);
-const lookupRepository = new LookupRepository(VPICDatabase);
-const vpicService = new VPICService(vinRepository, yearRepository, makeRepository, modelRepository, lookupRepository);
-const vpicController = new VPICController(vpicService);
+export const loadDependencies = (vpicDatabase: VPICDatabase, mainDatabase: MainDatabase) => {
+	const vinRepository = new VinRepository(vpicDatabase);
+	const yearRepository = new YearRepository(vpicDatabase);
+	const makeRepository = new MakeRepository(vpicDatabase);
+	const modelRepository = new ModelRepository(vpicDatabase);
+	const lookupRepository = new LookupRepository(vpicDatabase);
+	const vpicService = new VPICService(vinRepository, yearRepository, makeRepository, modelRepository, lookupRepository);
+	const vpicController = new VPICController(vpicService);
 
-export { vpicController };
+	return {
+		controllers: {
+			vpicController,
+		},
+	};
+};
+
+export type Dependencies = ReturnType<typeof loadDependencies>;

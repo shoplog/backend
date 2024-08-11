@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from 'express';
 import { ParamsDictionary, Query } from 'express-serve-static-core';
+import { MainDatabase } from 'src/data/main/database';
 
 export type ExpressMiddlewareFunction<
 	P = ParamsDictionary,

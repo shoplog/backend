@@ -1,6 +1,6 @@
 import { Express } from 'express';
-import { createApp } from 'src/api/setup';
 import supertest from 'supertest';
+import { createTestApp } from 'tests/utils/app';
 import { createJwt } from 'tests/utils/jwt';
 
 describe('/vpic/makes', () => {
@@ -9,7 +9,7 @@ describe('/vpic/makes', () => {
 	let bearerToken: string;
 
 	beforeAll(async () => {
-		app = await createApp();
+		app = await createTestApp();
 	});
 
 	beforeEach(async () => {
