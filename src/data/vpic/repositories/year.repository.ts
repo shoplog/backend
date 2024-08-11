@@ -1,4 +1,4 @@
-import { VPICDatabase } from 'src/common/initializers/database';
+import { VPICDatabase } from 'src/data/vpic/database';
 
 export interface IYearRepository {
 	getAllYears(): Promise<number[]>;

@@ -1,5 +1,5 @@
 import { sql } from 'kysely';
-import { VPICDatabase } from 'src/common/initializers/database';
+import { VPICDatabase } from 'src/data/vpic/database';
 import { DecodingOutput } from 'src/data/vpic/vpic-db';
 
 export type VehicleElements = {

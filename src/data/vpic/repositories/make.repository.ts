@@ -1,5 +1,5 @@
 import { sql } from 'kysely';
-import { VPICDatabase } from 'src/common/initializers/database';
+import { VPICDatabase } from 'src/data/vpic/database';
 import { SelectableLookup } from 'src/data/vpic/types/common';
 
 export interface IMakeRepository {

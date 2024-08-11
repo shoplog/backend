@@ -1,5 +1,5 @@
 import { VPICController } from 'src/api/controllers/vpic.controller';
-import { VPICDatabase } from 'src/common/initializers/database';
+import { VPICDatabase } from 'src/data/vpic/database';
 import {
 	LookupRepository,
 	MakeRepository,
