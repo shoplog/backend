@@ -3,7 +3,7 @@ const config = {
 		'^.+\\.ts$': '@swc/jest',
 	},
 	runtime: '@side/jest-runtime',
-	setupFilesAfterEnv: ['jest-extended/all'],
+	setupFilesAfterEnv: ['./tests/setup.ts', 'jest-extended/all'],
 };
 
 export default config;

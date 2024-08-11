@@ -1,13 +1,19 @@
 import { Express } from 'express';
 import { createApp } from 'src/api/setup';
 import supertest from 'supertest';
+import { createJwt } from 'tests/utils/jwt';
 
 describe('/vpic/years', () => {
-	let app: Express;
 	const resourceUrl = '/api/v1/vpic/years';
+	let app: Express;
+	let bearerToken: string;
 
 	beforeAll(async () => {
 		app = await createApp();
+	});
+
+	beforeEach(async () => {
+		bearerToken = `Bearer ${await createJwt()}`;
 	});
 
 	describe('GET /', () => {
@@ -21,6 +27,7 @@ describe('/vpic/years', () => {
 			// Act
 			const body = await supertest(app)
 				.get(resourceUrl)
+				.set('Authorization', bearerToken)
 				.expect(200)
 				.then((res) => res.body);
 
@@ -37,6 +44,7 @@ describe('/vpic/years', () => {
 			// Act
 			const body = await supertest(app)
 				.get(`${resourceUrl}/${year}/makes`)
+				.set('Authorization', bearerToken)
 				.expect(200)
 				.then((res) => res.body);
 
@@ -49,12 +57,28 @@ describe('/vpic/years', () => {
 			// Act
 			const body = await supertest(app)
 				.get(`${resourceUrl}/abc/makes`)
+				.set('Authorization', bearerToken)
 				.expect(400)
 				.then((res) => res.body);
 
 			// Assert
 			expect(body).toMatchObject({
 				status: 400,
+			});
+		});
+
+		it('should respond with 401 - invalid token', async () => {
+			// Arrange
+			// Act
+			const body = await supertest(app)
+				.get(`${resourceUrl}/abc/makes`)
+				.set('Authorization', 'blah')
+				.expect(401)
+				.then((res) => res.body);
+
+			// Assert
+			expect(body).toMatchObject({
+				status: 401,
 			});
 		});
 	});

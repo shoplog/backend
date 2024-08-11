@@ -1,15 +1,19 @@
 import { Express } from 'express';
 import { createApp } from 'src/api/setup';
 import supertest from 'supertest';
-
-const baseUrl = '/api/v1/vpic';
+import { createJwt } from 'tests/utils/jwt';
 
 describe('/vpic/models', () => {
-	let app: Express;
 	const resourceUrl = '/api/v1/vpic/models';
+	let app: Express;
+	let bearerToken: string;
 
 	beforeAll(async () => {
 		app = await createApp();
+	});
+
+	beforeEach(async () => {
+		bearerToken = `Bearer ${await createJwt()}`;
 	});
 
 	describe('GET /vpic/models/:modelId/year/:year/attributes', () => {
@@ -21,6 +25,7 @@ describe('/vpic/models', () => {
 			// Act
 			const body = await supertest(app)
 				.get(`${resourceUrl}/${modelId}/year/${year}/attributes`)
+				.set('Authorization', bearerToken)
 				.expect(200)
 				.then((res) => res.body);
 
@@ -34,7 +39,10 @@ describe('/vpic/models', () => {
 			const year = 2002;
 
 			// Act
-			await supertest(app).get(`${resourceUrl}/${modelId}/year/${year}/attributes`).expect(404);
+			await supertest(app)
+				.get(`${resourceUrl}/${modelId}/year/${year}/attributes`)
+				.set('Authorization', bearerToken)
+				.expect(404);
 		});
 	});
 });

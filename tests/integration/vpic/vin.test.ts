@@ -4,14 +4,19 @@ import { VPICVinResponseBody } from 'src/api/controllers/vpic.controller';
 import { createApp } from 'src/api/setup';
 import { SearchByVinError } from 'src/domains/vpic/errors/search-by-vin.error';
 import supertest from 'supertest';
+import { createJwt } from 'tests/utils/jwt';
 
 describe('/vpic/vin', () => {
 	const resourceUrl = '/api/v1/vpic/vin';
-
 	let app: Express;
+	let bearerToken: string;
 
 	beforeAll(async () => {
 		app = await createApp();
+	});
+
+	beforeEach(async () => {
+		bearerToken = `Bearer ${await createJwt()}`;
 	});
 
 	describe('GET /:vin', () => {
@@ -85,6 +90,7 @@ describe('/vpic/vin', () => {
 			// Act
 			const body = await supertest(app)
 				.get(`${resourceUrl}/${vin}`)
+				.set('Authorization', bearerToken)
 				.expect(200)
 				.then((res) => res.body);
 
@@ -98,14 +104,14 @@ describe('/vpic/vin', () => {
 
 			// Act
 			// Assert
-			await supertest(app).get(`${resourceUrl}/${vin}`).expect(400);
+			await supertest(app).get(`${resourceUrl}/${vin}`).set('Authorization', bearerToken).expect(400);
 		});
 
 		it('should respond with 404 Not found - vin missing', async () => {
 			// Arrange
 			// Act
 			// Assert
-			await supertest(app).get(`${resourceUrl}/`).expect(404);
+			await supertest(app).get(`${resourceUrl}/`).set('Authorization', bearerToken).expect(404);
 		});
 
 		it('should respond with 422 Unprocessable entity - wrong vin', async () => {
@@ -123,6 +129,7 @@ describe('/vpic/vin', () => {
 			// Act
 			const body = await supertest(app)
 				.get(`${resourceUrl}/${vin}`)
+				.set('Authorization', bearerToken)
 				.expect(422)
 				.then((res) => res.body);
 
