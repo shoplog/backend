@@ -11,6 +11,10 @@ export type ExpressMiddlewareFunction<
 	Locals extends Record<string, any> = Record<string, any>,
 > = (req: Request<P, ResBody, ReqBody, ReqQuery, Locals>, res: Response<ResBody, Locals>) => Promise<void>;
 
+type ContextWrapMiddlewareOptions = {
+	disableTransactions?: boolean;
+};
+
 export function contextWrapMiddleware<
 	P = ParamsDictionary,
 	ResBody = any,
@@ -18,7 +22,8 @@ export function contextWrapMiddleware<
 	ReqQuery = Query,
 	Locals extends Record<string, any> = Record<string, any>,
 >(
-	fn: ExpressMiddlewareFunction<P, ResBody, ReqBody, ReqQuery, Locals>
+	fn: ExpressMiddlewareFunction<P, ResBody, ReqBody, ReqQuery, Locals>,
+	opts?: ContextWrapMiddlewareOptions
 ): (
 	req: Request<P, ResBody, ReqBody, ReqQuery, Locals>,
 	res: Response<ResBody, Locals>,
@@ -26,7 +31,15 @@ export function contextWrapMiddleware<
 ) => Promise<void> {
 	return async (req, res, next) => {
 		try {
-			await fn(req, res);
+			if (!opts?.disableTransactions) {
+				await MainDatabase.$transaction(async (trx) => {
+					req.db = trx;
+					await fn(req, res);
+				});
+			} else {
+				req.db = MainDatabase;
+				await fn(req, res);
+			}
 		} catch (error) {
 			next(error);
 		}
