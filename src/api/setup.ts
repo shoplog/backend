@@ -41,6 +41,10 @@ export const createApp = async (dependencies: Dependencies) => {
 
 	app.use(compression());
 
+	app.get('/docs/openapi.json', (_req, res) => {
+		res.json(apiSpec);
+	});
+
 	app.use(
 		'/docs',
 		apiReference({
