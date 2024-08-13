@@ -1,5 +1,6 @@
 import { apiReference } from '@scalar/express-api-reference';
 import compression from 'compression';
+import cors from 'cors';
 import express, { json } from 'express';
 import { middleware as OpenApiValidatorMiddleware } from 'express-openapi-validator';
 import { OpenApiSpecLoader } from 'express-openapi-validator/dist/framework/openapi.spec.loader';
@@ -40,6 +41,8 @@ export const createApp = async (dependencies: Dependencies) => {
 	app.set('trust proxy', 1);
 
 	app.use(compression());
+
+	app.use(cors());
 
 	app.get('/docs/openapi.json', (_req, res) => {
 		res.json(apiSpec);
