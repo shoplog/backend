@@ -1,7 +1,6 @@
 {
-	"name": "backend",
+	"name": "shoplog-backend",
 	"version": "1.0.0",
-	"main": "index.js",
 	"scripts": {
 		"dev": "TZ=UTC NODE_ENV=development SWCRC=true nodemon --exec node -r @swc-node/register src/index.ts",
 		"test": "TZ=UTC NODE_ENV=test LOG_LEVEL=silent SWCRC=true jest --runInBand --detectOpenHandles --forceExit --coverage",
@@ -16,7 +15,7 @@
 		"db:seed": "prisma db seed"
 	},
 	"author": "",
-	"license": "MIT",
+	"license": "GPL-3.0-only",
 	"description": "",
 	"dependencies": {
 		"@prisma/client": "5.18.0",
