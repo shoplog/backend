@@ -34,7 +34,7 @@
 		"pino": "9.4.0",
 		"pino-http": "10.3.0",
 		"pino-pretty": "11.2.2",
-		"string-strip-html": "13.4.8",
+		"string-strip-html": "8.5.0",
 		"tarn": "3.0.2",
 		"tedious": "18.6.1"
 	},
@@ -82,5 +82,12 @@
 	"prisma": {
 		"schema": "src/data/main/schema.prisma",
 		"seed": "node -r @swc-node/register src/data/main/seed.ts"
+	},
+	"pnpm": {
+		"updateConfig": {
+			"ignoreDependencies": [
+				"string-strip-html"
+			]
+		}
 	}
 }
