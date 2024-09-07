@@ -29,18 +29,6 @@ export class ModelRepository implements IModelRepository {
 	}
 
 	async getModelAttributesByModelIdYear(id: number, year: number): Promise<AttributeQueryResult[]> {
-		// const vinSchemaIds = await this.db
-		// 	.selectFrom('Pattern as p')
-		// 	.innerJoin('Element as e', 'e.Id', 'p.ElementId')
-		// 	.innerJoin('Wmi_VinSchema as wvs', 'wvs.VinSchemaId', 'p.VinSchemaId')
-		// 	.where('p.AttributeId', '=', id.toString())
-		// 	.where('e.Id', '=', ModelElementId)
-		// 	.where('wvs.YearFrom', '<=', year)
-		// 	.where(sql`ISNULL(wvs.YearTo, 2999)`, '>=', year)
-		// 	.select('p.VinSchemaId')
-		// 	.distinct()
-		// 	.execute();
-
 		const query = await this.db
 			.selectFrom('Pattern as p')
 			.innerJoin(

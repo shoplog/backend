@@ -109,7 +109,8 @@ export class VPICService implements IVPICService {
 							let id: number | null = null;
 
 							if (element.DataType === 'int' || element.DataType === 'decimal') {
-								value = Number(key);
+								const num = Number(key);
+								value = isNaN(num) ? key : num;
 							} else if (element.DataType === 'string') {
 								value = key;
 							} else if (element.DataType === 'lookup' && element.LookupTable) {

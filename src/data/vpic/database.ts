@@ -45,6 +45,7 @@ const dialect = new MssqlDialect({
 // to communicate with your database.
 export const VPICDatabase = new Kysely<vPICList_Lite1>({
 	dialect,
+	log: ['query', 'error'],
 });
 
 export type VPICDatabase = typeof VPICDatabase;
