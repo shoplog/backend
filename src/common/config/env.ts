@@ -29,7 +29,8 @@ const schema = Type.Object({
 });
 
 if (!Value.Check(schema, process.env)) {
-	throw new Error('Invalid environment variables');
+	const errors = [...Value.Errors(schema, process.env)];
+	throw new Error(`Invalid environment variables ${errors.map((x) => x.path).join(', ')}`);
 }
 
 const env = Value.Decode(schema, process.env);
