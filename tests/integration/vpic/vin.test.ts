@@ -3,20 +3,24 @@ import { snakeCase } from 'lodash';
 import { VPICVinResponseBody } from 'src/api/controllers/vpic.controller';
 import { SearchByVinError } from 'src/domains/vpic/errors/search-by-vin.error';
 import supertest from 'supertest';
-import { createTestFixture } from 'tests/utils/app';
+import { TestFixture, createTestFixture } from 'tests/utils/app';
 import { createJwt } from 'tests/utils/jwt';
 
 describe('/vpic/vin', () => {
 	const resourceUrl = '/api/v1/vpic/vin';
-	let app: Express;
+	let fixture: TestFixture;
 	let bearerToken: string;
 
 	beforeAll(async () => {
-		app = await createTestFixture();
+		fixture = await createTestFixture();
 	});
 
 	beforeEach(async () => {
 		bearerToken = `Bearer ${await createJwt()}`;
+	});
+
+	afterEach(async () => {
+		await fixture.destroy();
 	});
 
 	describe('GET /:vin', () => {
@@ -88,7 +92,7 @@ describe('/vpic/vin', () => {
 			};
 
 			// Act
-			const body = await supertest(app)
+			const body = await fixture.request
 				.get(`${resourceUrl}/${vin}`)
 				.set('Authorization', bearerToken)
 				.expect(200)
