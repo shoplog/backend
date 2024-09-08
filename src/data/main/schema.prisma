@@ -14,13 +14,192 @@ datasource db {
   url      = env("POSTGRES_URL")
 }
 
-model User {
-  id            String   @id @default(cuid())
-  refId         String   @unique @map("ref_id")
-  email         String   @unique
-  emailVerified Boolean  @default(false) @map("email_verified")
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
+enum DistanceUnit {
+  MI
+  KM
 
-  @@map("users")
+  @@map("distanceUnit")
+}
+
+enum TimeUnit {
+  DAY
+  WEEK
+  MONTH
+  YEAR
+
+  @@map("timeUnit")
+}
+
+model Vehicle {
+  id     String @id @default(cuid())
+  userId String @map("user_id")
+
+  vehicleAttributes VehicleAttribute[]
+  maintenanceLogs   MaintenanceLog[]
+  vehicleParts      VehiclePart[]
+  vehicleServices   VehicleService[]
+
+  make         String       @map("make")
+  model        String       @map("model")
+  year         Int          @map("year")
+  vin          String?      @map("vin")
+  plate        String?      @map("plate")
+  color        String?      @map("color")
+  odometer     Int          @map("odometer")
+  odometerUnit DistanceUnit @map("odometer_unit")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("vehicles")
+}
+
+model VehicleAttribute {
+  id String @id @default(cuid())
+
+  vehicleId String  @map("vehicle_id")
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
+
+  code  String @map("code")
+  name  String @map("name")
+  value String @map("value")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("vehicleAttributes")
+}
+
+model MaintenanceLog {
+  id     String @id @default(cuid())
+  userId String @map("user_id")
+
+  vehicleId              String                  @map("vehicle_id")
+  vehicle                Vehicle                 @relation(fields: [vehicleId], references: [id])
+  serviceShopId          String?                 @map("serviced_by_shop_id")
+  serviceShop            ServiceShop?            @relation(fields: [serviceShopId], references: [id])
+  maintenanceLogServices MaintenanceLogService[]
+
+  serviceDate DateTime @map("service_date")
+  odometer    Int      @map("odometer")
+  notes       String   @map("description")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId, vehicleId])
+  @@map("maintenanceLogs")
+}
+
+model MaintenanceLogService {
+  id String @id @default(cuid())
+
+  maintenanceLogId           String                      @map("maintenance_log_id")
+  maintenanceLog             MaintenanceLog              @relation(fields: [maintenanceLogId], references: [id])
+  serviceId                  String                      @map("service_id")
+  service                    Service                     @relation(fields: [serviceId], references: [id])
+  maintenanceLogServiceParts MaintenanceLogServicePart[]
+
+  @@map("maintenanceLogs_services")
+}
+
+model MaintenanceLogServicePart {
+  id String @id @default(cuid())
+
+  maintenanceLogServiceId String                @map("maintenance_log_service_id")
+  maintenanceLogService   MaintenanceLogService @relation(fields: [maintenanceLogServiceId], references: [id])
+  partId                  String                @map("part_id")
+  part                    Part                  @relation(fields: [partId], references: [id])
+
+  @@map("maintenanceLogs_services_parts")
+}
+
+model ServiceShop {
+  id String @id @default(cuid())
+
+  maintenanceLogs MaintenanceLog[]
+
+  name        String  @map("name")
+  description String? @map("description")
+  contactName String? @map("contact_name")
+  address     String? @map("address")
+  city        String? @map("city")
+  state       String? @map("state")
+  postalCode  String? @map("postal_code")
+  phoneNumber String? @map("phone_number")
+  email       String? @map("email")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("serviceShops")
+}
+
+model Part {
+  id String @id @default(cuid())
+
+  vehicleParts VehiclePart[]
+
+  name                   String        @map("name")
+  description            String?       @map("description")
+  manufacturerPartNumber String?       @map("part_number")
+  oemPartNumber          String?       @map("oem_part_number")
+  lifespanLowerBound     Int?          @map("lifespan_lower_bound")
+  lifespanUpperBound     Int?          @map("lifespan_upper_bound")
+  lifespanUnit           DistanceUnit? @map("lifespan_unit")
+
+  createdAt                 DateTime                    @default(now()) @map("created_at")
+  updatedAt                 DateTime                    @updatedAt @map("updated_at")
+  MaintenanceLogServicePart MaintenanceLogServicePart[]
+
+  @@map("parts")
+}
+
+model VehiclePart {
+  vehicleId String  @map("vehicle_id")
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
+  partId    String  @map("part_id")
+  part      Part    @relation(fields: [partId], references: [id])
+
+  @@id([vehicleId, partId])
+  @@map("vehicles_parts")
+}
+
+model Service {
+  id String @id @default(cuid())
+
+  vehicleServices        VehicleService[]
+  maintenanceLogServices MaintenanceLogService[]
+
+  name        String  @map("name")
+  description String? @map("description")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("services")
+}
+
+enum VehicleServiceRepeatType {
+  ODOMETER
+  TIME
+
+  @@map("vehicleServiceRepeatType")
+}
+
+model VehicleService {
+  vehicleId String  @map("vehicle_id")
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
+  serviceId String  @map("service_id")
+  service   Service @relation(fields: [serviceId], references: [id])
+
+  repeatType                 VehicleServiceRepeatType? @map("repeat_type")
+  repeatIntervalLowerBound   Int?                      @map("repeat_interval_lower_bound")
+  repeatIntervalUpperBound   Int?                      @map("repeat_interval_upper_bound")
+  repeatIntervalDistanceUnit DistanceUnit?             @map("repeat_interval_distance_unit")
+  repeatIntervalTimeUnit     TimeUnit?                 @map("repeat_interval_time_unit")
+
+  @@id([vehicleId, serviceId])
+  @@map("vehicles_services")
 }
