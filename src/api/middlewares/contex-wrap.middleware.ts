@@ -31,18 +31,7 @@ export function contextWrapMiddleware<
 ) => Promise<void> {
 	return async (req, res, next) => {
 		try {
-			if (!opts?.disableTransactions && !req.db) {
-				await MainDatabase.$transaction(async (trx) => {
-					req.db = trx;
-					await fn(req, res);
-				});
-			} else {
-				if (!req.db) {
-					req.db = MainDatabase;
-				}
-
-				await fn(req, res);
-			}
+			await fn(req, res);
 		} catch (error) {
 			next(error);
 		}

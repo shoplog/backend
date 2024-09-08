@@ -5,48 +5,57 @@ import { vPICList_Lite1 } from 'src/data/vpic/vpic-db';
 import * as tarn from 'tarn';
 import * as tedious from 'tedious';
 
-const dialect = new MssqlDialect({
-	tarn: {
-		...tarn,
-		options: {
-			min: 0,
-			max: 10,
-			log: (message) => {
-				logger.debug(message);
+const dialect = (port: number) =>
+	new MssqlDialect({
+		tarn: {
+			...tarn,
+			options: {
+				min: 0,
+				max: 10,
+				log: (message) => {
+					logger.debug(message);
+				},
 			},
 		},
-	},
-	tedious: {
-		...tedious,
-		connectionFactory: () =>
-			new tedious.Connection({
-				authentication: {
-					options: {
-						userName: CONFIG.mssql.user,
-						password: CONFIG.mssql.password,
+		tedious: {
+			...tedious,
+			connectionFactory: () =>
+				new tedious.Connection({
+					authentication: {
+						options: {
+							userName: CONFIG.mssql.user,
+							password: CONFIG.mssql.password,
+						},
+						type: 'default',
 					},
-					type: 'default',
-				},
-				options: {
-					database: CONFIG.mssql.database,
-					port: 1433,
-					trustServerCertificate: true,
-					isolationLevel: tedious.ISOLATION_LEVEL.READ_UNCOMMITTED,
-					readOnlyIntent: true,
-				},
-				server: CONFIG.mssql.host,
-			}),
-	},
-});
+					options: {
+						database: CONFIG.mssql.database,
+						port,
+						trustServerCertificate: true,
+						isolationLevel: tedious.ISOLATION_LEVEL.READ_UNCOMMITTED,
+						readOnlyIntent: true,
+					},
+					server: CONFIG.mssql.host,
+				}),
+		},
+	});
 
 // Database interface is passed to Kysely's constructor, and from now on, Kysely
 // knows your database structure.
 // Dialect is passed to Kysely's constructor, and from now on, Kysely knows how
 // to communicate with your database.
-export const VPICDatabase = new Kysely<vPICList_Lite1>({
-	dialect,
-	log: ['query', 'error'],
-});
+export const createVPICDatabase = (port: number) =>
+	new Kysely<vPICList_Lite1>({
+		dialect: dialect(port),
+		log: (event) => {
+			if (event.level === 'query') {
+				logger.debug(event.query.sql);
+				logger.debug(event.query.parameters);
+			} else if (event.level === 'error') {
+				logger.error(event.error);
+			}
+		},
+	});
 
-export type VPICDatabase = typeof VPICDatabase;
+export type VPICDatabase = Kysely<vPICList_Lite1>;
 export type VPICTables = keyof vPICList_Lite1;

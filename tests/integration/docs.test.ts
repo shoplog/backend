@@ -1,13 +1,13 @@
 import { Express } from 'express';
 import { loadOpenApiSpec } from 'src/api/setup';
 import supertest from 'supertest';
-import { createTestApp } from 'tests/utils/app';
+import { createTestFixture } from 'tests/utils/app';
 
 describe('/docs', () => {
 	let app: Express;
 
 	beforeAll(async () => {
-		app = await createTestApp();
+		app = await createTestFixture();
 	});
 
 	it('GET /docs should return 200 OK', async () => {

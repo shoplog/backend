@@ -1,11 +1,16 @@
 import nock from 'nock';
 import { CONFIG } from 'src/common/config/env';
+import { StartedTestContainer } from 'testcontainers';
+import { getVpicMssqlContainer } from 'tests/containers';
 import { JWKPair } from 'tests/utils/jwt';
 
-beforeAll(() => {
+let vpicContainer: StartedTestContainer;
+
+beforeAll(async () => {
 	const issuer = CONFIG.auth0.issuerBaseURL;
 	const jwksUri = '/.well-known/jwks.json';
 	const discoveryUri = '/.well-known/openid-configuration';
+	vpicContainer = await getVpicMssqlContainer();
 
 	nock(issuer)
 		.persist()
@@ -24,7 +29,11 @@ beforeEach(() => {});
 
 afterEach(() => {});
 
-afterAll(() => {
+afterAll(async () => {
 	nock.cleanAll();
 	nock.restore();
+
+	await vpicContainer?.stop();
 });
+
+export { vpicContainer };

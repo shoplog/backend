@@ -3,7 +3,7 @@ import { snakeCase } from 'lodash';
 import { VPICVinResponseBody } from 'src/api/controllers/vpic.controller';
 import { SearchByVinError } from 'src/domains/vpic/errors/search-by-vin.error';
 import supertest from 'supertest';
-import { createTestApp } from 'tests/utils/app';
+import { createTestFixture } from 'tests/utils/app';
 import { createJwt } from 'tests/utils/jwt';
 
 describe('/vpic/vin', () => {
@@ -12,7 +12,7 @@ describe('/vpic/vin', () => {
 	let bearerToken: string;
 
 	beforeAll(async () => {
-		app = await createTestApp();
+		app = await createTestFixture();
 	});
 
 	beforeEach(async () => {
@@ -43,7 +43,7 @@ describe('/vpic/vin', () => {
 					plantCountryId: 6,
 					plantCompanyName: 'New United Motor Manufacturing (NUMMI)',
 					plantState: 'CALIFORNIA',
-					note: 'Chassis: With 1/2 ton Independent Front Suspension',
+					note: 'Extra Cab',
 					bodyClass: 'Pickup',
 					bodyClassId: 60,
 					wheelBaseType: 'Extra Long',

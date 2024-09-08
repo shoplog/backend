@@ -23,7 +23,7 @@ const schema = Type.Object({
 	AUTH0_AUDIENCE: Type.String({ minLength: 1 }),
 	SQL_SERVER_HOST: Type.String({ minLength: 1 }),
 	SQL_SERVER_DATABASE: Type.String({ minLength: 1 }),
-	SQL_SERVER_PORT: Type.String({ minLength: 1 }),
+	SQL_SERVER_PORT: StringAsNumber({ minLength: 1 }),
 	SQL_SERVER_USERNAME: Type.String({ minLength: 1 }),
 	SQL_SERVER_PASSWORD: Type.String({ minLength: 1 }),
 });

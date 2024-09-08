@@ -1,6 +1,6 @@
 import { Express } from 'express';
 import supertest from 'supertest';
-import { createTestApp } from 'tests/utils/app';
+import { createTestFixture } from 'tests/utils/app';
 import { createJwt } from 'tests/utils/jwt';
 
 describe('/vpic/years', () => {
@@ -9,7 +9,7 @@ describe('/vpic/years', () => {
 	let bearerToken: string;
 
 	beforeAll(async () => {
-		app = await createTestApp();
+		app = await createTestFixture();
 	});
 
 	beforeEach(async () => {

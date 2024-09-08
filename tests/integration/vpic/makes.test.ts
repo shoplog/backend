@@ -1,15 +1,17 @@
-import { Express } from 'express';
-import supertest from 'supertest';
-import { createTestApp } from 'tests/utils/app';
+import { TestFixture, createTestFixture } from 'tests/utils/app';
 import { createJwt } from 'tests/utils/jwt';
 
 describe('/vpic/makes', () => {
 	const resourceUrl = '/api/v1/vpic/makes';
-	let app: Express;
+	let fixture: TestFixture;
 	let bearerToken: string;
 
 	beforeAll(async () => {
-		app = await createTestApp();
+		fixture = await createTestFixture();
+	});
+
+	afterAll(async () => {
+		await fixture.destroy();
 	});
 
 	beforeEach(async () => {
@@ -23,7 +25,7 @@ describe('/vpic/makes', () => {
 			const year = 2002;
 
 			// Act
-			const body = await supertest(app)
+			const body = await fixture.request
 				.get(`${resourceUrl}/${makeId}/year/${year}/models`)
 				.set('Authorization', bearerToken)
 				.expect(200)
