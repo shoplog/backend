@@ -18,7 +18,7 @@ enum DistanceUnit {
   MI
   KM
 
-  @@map("distanceUnit")
+  @@map("distance_unit")
 }
 
 enum TimeUnit {
@@ -27,7 +27,7 @@ enum TimeUnit {
   MONTH
   YEAR
 
-  @@map("timeUnit")
+  @@map("time_unit")
 }
 
 model Vehicle {
@@ -39,14 +39,14 @@ model Vehicle {
   vehicleParts      VehiclePart[]
   vehicleServices   VehicleService[]
 
-  make         String       @map("make")
-  model        String       @map("model")
-  year         Int          @map("year")
-  vin          String?      @map("vin")
-  plate        String?      @map("plate")
-  color        String?      @map("color")
-  odometer     Int          @map("odometer")
-  odometerUnit DistanceUnit @map("odometer_unit")
+  make                String       @map("make")
+  model               String       @map("model")
+  year                Int          @map("year")
+  vin                 String?      @map("vin")
+  plate               String?      @map("plate")
+  color               String?      @map("color")
+  mileage             Int          @map("mileage")
+  mileageDistanceUnit DistanceUnit @map("mileage_distance_unit")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -68,7 +68,7 @@ model VehicleAttribute {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@map("vehicleAttributes")
+  @@map("vehicle_attributes")
 }
 
 model MaintenanceLog {
@@ -82,14 +82,14 @@ model MaintenanceLog {
   maintenanceLogServices MaintenanceLogService[]
 
   serviceDate DateTime @map("service_date")
-  odometer    Int      @map("odometer")
+  mileage     Int      @map("mileage")
   notes       String   @map("description")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([userId, vehicleId])
-  @@map("maintenanceLogs")
+  @@map("maintenance_logs")
 }
 
 model MaintenanceLogService {
@@ -101,7 +101,7 @@ model MaintenanceLogService {
   service                    Service                     @relation(fields: [serviceId], references: [id])
   maintenanceLogServiceParts MaintenanceLogServicePart[]
 
-  @@map("maintenanceLogs_services")
+  @@map("maintenance_logs_services")
 }
 
 model MaintenanceLogServicePart {
@@ -112,7 +112,7 @@ model MaintenanceLogServicePart {
   partId                  String                @map("part_id")
   part                    Part                  @relation(fields: [partId], references: [id])
 
-  @@map("maintenanceLogs_services_parts")
+  @@map("maintenance_logs_services_parts")
 }
 
 model ServiceShop {
@@ -133,7 +133,7 @@ model ServiceShop {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@map("serviceShops")
+  @@map("service_shops")
 }
 
 model Part {
@@ -147,7 +147,7 @@ model Part {
   oemPartNumber          String?       @map("oem_part_number")
   lifespanLowerBound     Int?          @map("lifespan_lower_bound")
   lifespanUpperBound     Int?          @map("lifespan_upper_bound")
-  lifespanUnit           DistanceUnit? @map("lifespan_unit")
+  lifespanDistanceUnit   DistanceUnit? @map("lifespan_distance_unit")
 
   createdAt                 DateTime                    @default(now()) @map("created_at")
   updatedAt                 DateTime                    @updatedAt @map("updated_at")
@@ -182,10 +182,10 @@ model Service {
 }
 
 enum VehicleServiceRepeatType {
-  ODOMETER
+  MILEAGE
   TIME
 
-  @@map("vehicleServiceRepeatType")
+  @@map("vehicle_service_repeat_type")
 }
 
 model VehicleService {

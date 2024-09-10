@@ -12,6 +12,7 @@ import { OPEN_API_SPEC_FILE_PATH } from 'src/api/constants/files';
 import { CUSTOM_HEADERS } from 'src/api/constants/headers';
 import { Dependencies } from 'src/api/global';
 import { errorHandlerMiddleware } from 'src/api/middlewares';
+import { createVehiclesRoutes } from 'src/api/routes/vehicles.routes';
 import { createVPICRoutes } from 'src/api/routes/vpic.routes';
 import { logger } from 'src/common/initializers/logger';
 
@@ -83,11 +84,12 @@ export const createApp = async (dependencies: Dependencies) => {
 		})
 	);
 
-	app['get']('/', (req, res) => {
+	app.get('/', (_req, res) => {
 		res.status(200).end();
 	});
 
 	app.use('/api/v1', await createVPICRoutes(dependencies.controllers.vpicController));
+	app.use('/api/v1', await createVehiclesRoutes(dependencies.controllers.vehiclesController));
 
 	app.use((req, _res, _next) => {
 		throw new NotFound({ path: req.originalUrl });

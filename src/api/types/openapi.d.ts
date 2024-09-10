@@ -4,43 +4,18 @@
  */
 
 export interface paths {
-	'/': {
+	'/vehicles': {
 		parameters: {
 			query?: never;
 			header?: never;
 			path?: never;
 			cookie?: never;
 		};
-		/** Get API status */
-		get: {
-			parameters: {
-				query?: never;
-				header?: never;
-				path?: never;
-				cookie?: never;
-			};
-			requestBody?: never;
-			responses: {
-				/** @description API is up and running */
-				200: {
-					headers: {
-						[name: string]: unknown;
-					};
-					content: {
-						'application/json': {
-							/**
-							 * @description API status
-							 * @example up
-							 */
-							status?: string;
-						};
-					};
-				};
-				500: components['responses']['500'];
-			};
-		};
+		/** Get a list of vehicles */
+		get: operations['getVehicles'];
 		put?: never;
-		post?: never;
+		/** Create a new vehicle */
+		post: operations['createVehicle'];
 		delete?: never;
 		options?: never;
 		head?: never;
@@ -136,6 +111,89 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
 	schemas: {
+		Vehicle: {
+			/**
+			 * Format: uuid
+			 * @description The unique identifier for the vehicle
+			 */
+			id: string;
+			/** @description The unique identifier for the user who owns this vehicle */
+			userId: string;
+			/** @description The make of the vehicle */
+			make: string;
+			/** @description The model of the vehicle */
+			model: string;
+			/**
+			 * Format: int32
+			 * @description The year of the vehicle
+			 */
+			year: number;
+			/** @description The Vehicle Identification Number */
+			vin?: string | null;
+			/** @description The license plate of the vehicle */
+			plate?: string | null;
+			/** @description The color of the vehicle */
+			color?: string | null;
+			/**
+			 * Format: int32
+			 * @description The mileage of the vehicle
+			 */
+			mileage: number;
+			/**
+			 * @description The unit of the mileage
+			 * @enum {string}
+			 */
+			mileageDistanceUnit: 'KM' | 'MI';
+			/**
+			 * Format: date-time
+			 * @description The date and time the vehicle was created
+			 */
+			createdAt?: string;
+			/**
+			 * Format: date-time
+			 * @description The date and time the vehicle was last updated
+			 */
+			updatedAt?: string;
+			/** @description The attributes of the vehicle */
+			attributes?: components['schemas']['VehicleAttribute'][];
+		};
+		VehicleCreateRequestBody: {
+			/** @description The make of the vehicle */
+			make: string;
+			/** @description The model of the vehicle */
+			model: string;
+			/**
+			 * Format: int32
+			 * @description The year of the vehicle
+			 */
+			year: number;
+			/** @description The Vehicle Identification Number */
+			vin?: string | null;
+			/** @description The license plate of the vehicle */
+			plate?: string | null;
+			/** @description The color of the vehicle */
+			color?: string | null;
+			/**
+			 * Format: int32
+			 * @description The mileage of the vehicle
+			 */
+			mileage: number;
+			/**
+			 * @description The unit of the mileage
+			 * @enum {string}
+			 */
+			mileageDistanceUnit: 'KM' | 'MI';
+			/** @description The attributes of the vehicle */
+			attributes?: components['schemas']['VehicleAttribute'][];
+		};
+		VehicleAttribute: {
+			/** @description The code of the attribute */
+			code: string;
+			/** @description The name of the attribute */
+			name: string;
+			/** @description The value of the attribute */
+			value: string;
+		};
 		/** @description A vehicle search result */
 		VPICVinResponseBody: {
 			/**
@@ -357,6 +415,60 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+	getVehicles: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Vehicles found */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['Vehicle'][];
+				};
+			};
+			401: components['responses']['401'];
+			403: components['responses']['403'];
+			404: components['responses']['404'];
+			500: components['responses']['500'];
+		};
+	};
+	createVehicle: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody: {
+			content: {
+				'application/json': components['schemas']['VehicleCreateRequestBody'];
+			};
+		};
+		responses: {
+			/** @description Vehicle created */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['Vehicle'];
+				};
+			};
+			400: components['responses']['400'];
+			401: components['responses']['401'];
+			403: components['responses']['403'];
+			404: components['responses']['404'];
+			422: components['responses']['422'];
+			500: components['responses']['500'];
+		};
+	};
 	getVPICVin: {
 		parameters: {
 			query?: never;
@@ -409,6 +521,8 @@ export interface operations {
 			};
 			401: components['responses']['401'];
 			403: components['responses']['403'];
+			404: components['responses']['404'];
+			422: components['responses']['422'];
 			500: components['responses']['500'];
 		};
 	};
@@ -438,6 +552,8 @@ export interface operations {
 			};
 			401: components['responses']['401'];
 			403: components['responses']['403'];
+			404: components['responses']['404'];
+			422: components['responses']['422'];
 			500: components['responses']['500'];
 		};
 	};
@@ -472,6 +588,8 @@ export interface operations {
 			};
 			401: components['responses']['401'];
 			403: components['responses']['403'];
+			404: components['responses']['404'];
+			422: components['responses']['422'];
 			500: components['responses']['500'];
 		};
 	};
@@ -506,6 +624,8 @@ export interface operations {
 			};
 			401: components['responses']['401'];
 			403: components['responses']['403'];
+			404: components['responses']['404'];
+			422: components['responses']['422'];
 			500: components['responses']['500'];
 		};
 	};

@@ -12,21 +12,59 @@ tags:
   - name: VPIC
     description: API endpoints for the Vehicle Product Information Catalog
 paths:
-  /:
+  /vehicles:
     get:
-      summary: Get API status
+      summary: Get a list of vehicles
+      operationId: getVehicles
+      tags: ['Vehicles']
+      security:
+        - bearerAuth: []
       responses:
         '200':
-          description: API is up and running
+          description: Vehicles found
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    description: API status
-                    example: up
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vehicle'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      summary: Create a new vehicle
+      operationId: createVehicle
+      tags: ['Vehicles']
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VehicleCreateRequestBody'
+      responses:
+        '200':
+          description: Vehicle created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '422':
+          $ref: '#/components/responses/422'
         '500':
           $ref: '#/components/responses/500'
   /vpic/vin/{vin}:
@@ -35,7 +73,8 @@ paths:
       operationId: getVPICVin
       tags: ['VPIC']
       security:
-        - BearerAuth: [vpic]
+        - bearerAuth: []
+
       parameters:
         - $ref: '#/components/parameters/vin'
       responses:
@@ -62,7 +101,7 @@ paths:
       summary: Get a list of supported vehicle years
       operationId: getVPICYears
       security:
-        - BearerAuth: [vpic]
+        - bearerAuth: []
       tags: ['VPIC']
       responses:
         '200':
@@ -87,7 +126,7 @@ paths:
       operationId: getVPICYearMakes
       tags: ['VPIC']
       security:
-        - BearerAuth: [vpic]
+        - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/year'
       responses:
@@ -113,7 +152,7 @@ paths:
       operationId: getVPICMYearMakeModels
       tags: ['VPIC']
       security:
-        - BearerAuth: [vpic]
+        - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/year'
         - $ref: '#/components/parameters/makeId'
@@ -140,7 +179,7 @@ paths:
       operationId: getVPICModelAttributesByModelIdAndYear
       tags: ['VPIC']
       security:
-        - BearerAuth: [vpic]
+        - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/modelId'
         - $ref: '#/components/parameters/year'
@@ -163,7 +202,7 @@ paths:
           $ref: '#/components/responses/500'
 components:
   securitySchemes:
-    BearerAuth:
+    bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
@@ -243,6 +282,134 @@ components:
             $ref: '#/components/schemas/Problem'
       description: Request was not processed due to an internal server error
   schemas:
+    Vehicle:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The unique identifier for the vehicle
+        userId:
+          type: string
+          description: The unique identifier for the user who owns this vehicle
+        make:
+          type: string
+          description: The make of the vehicle
+        model:
+          type: string
+          description: The model of the vehicle
+        year:
+          type: integer
+          format: int32
+          description: The year of the vehicle
+        vin:
+          type: string
+          description: The Vehicle Identification Number
+          nullable: true
+        plate:
+          type: string
+          description: The license plate of the vehicle
+          nullable: true
+        color:
+          type: string
+          description: The color of the vehicle
+          nullable: true
+        mileage:
+          type: integer
+          format: int32
+          description: The mileage of the vehicle
+        mileageDistanceUnit:
+          type: string
+          description: The unit of the mileage
+          enum:
+            - KM
+            - MI
+        createdAt:
+          type: string
+          format: date-time
+          description: The date and time the vehicle was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: The date and time the vehicle was last updated
+        attributes:
+          type: array
+          description: The attributes of the vehicle
+          items:
+            $ref: '#/components/schemas/VehicleAttribute'
+      required:
+        - id
+        - userId
+        - make
+        - model
+        - year
+        - mileage
+        - mileageDistanceUnit
+    VehicleCreateRequestBody:
+      type: object
+      additionalProperties: false
+      required:
+        - make
+        - model
+        - year
+        - mileage
+        - mileageDistanceUnit
+      properties:
+        make:
+          type: string
+          description: The make of the vehicle
+        model:
+          type: string
+          description: The model of the vehicle
+        year:
+          type: integer
+          format: int32
+          description: The year of the vehicle
+        vin:
+          type: string
+          description: The Vehicle Identification Number
+          nullable: true
+        plate:
+          type: string
+          description: The license plate of the vehicle
+          nullable: true
+        color:
+          type: string
+          description: The color of the vehicle
+          nullable: true
+        mileage:
+          type: integer
+          format: int32
+          description: The mileage of the vehicle
+        mileageDistanceUnit:
+          type: string
+          description: The unit of the mileage
+          enum:
+            - KM
+            - MI
+        attributes:
+          type: array
+          description: The attributes of the vehicle
+          items:
+            $ref: '#/components/schemas/VehicleAttribute'
+    VehicleAttribute:
+      type: object
+      additionalProperties: false
+      required:
+        - code
+        - name
+        - value
+      properties:
+        code:
+          type: string
+          description: The code of the attribute
+        name:
+          type: string
+          description: The name of the attribute
+        value:
+          type: string
+          description: The value of the attribute
     VPICVinResponseBody:
       description: 'A vehicle search result'
       type: object

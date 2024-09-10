@@ -1,11 +1,11 @@
 -- CreateEnum
-CREATE TYPE "distanceUnit" AS ENUM ('MI', 'KM');
+CREATE TYPE "distance_unit" AS ENUM ('MI', 'KM');
 
 -- CreateEnum
-CREATE TYPE "timeUnit" AS ENUM ('DAY', 'WEEK', 'MONTH', 'YEAR');
+CREATE TYPE "time_unit" AS ENUM ('DAY', 'WEEK', 'MONTH', 'YEAR');
 
 -- CreateEnum
-CREATE TYPE "vehicleServiceRepeatType" AS ENUM ('ODOMETER', 'TIME');
+CREATE TYPE "vehicle_service_repeat_type" AS ENUM ('MILEAGE', 'TIME');
 
 -- CreateTable
 CREATE TABLE "vehicles" (
@@ -17,8 +17,8 @@ CREATE TABLE "vehicles" (
     "vin" TEXT,
     "plate" TEXT,
     "color" TEXT,
-    "odometer" INTEGER NOT NULL,
-    "odometer_unit" "distanceUnit" NOT NULL,
+    "mileage" INTEGER NOT NULL,
+    "mileage_distance_unit" "distance_unit" NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -26,7 +26,7 @@ CREATE TABLE "vehicles" (
 );
 
 -- CreateTable
-CREATE TABLE "vehicleAttributes" (
+CREATE TABLE "vehicle_attributes" (
     "id" TEXT NOT NULL,
     "vehicle_id" TEXT NOT NULL,
     "code" TEXT NOT NULL,
@@ -35,44 +35,44 @@ CREATE TABLE "vehicleAttributes" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "vehicleAttributes_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "vehicle_attributes_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "maintenanceLogs" (
+CREATE TABLE "maintenance_logs" (
     "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
     "vehicle_id" TEXT NOT NULL,
     "serviced_by_shop_id" TEXT,
     "service_date" TIMESTAMP(3) NOT NULL,
-    "odometer" INTEGER NOT NULL,
+    "mileage" INTEGER NOT NULL,
     "description" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "maintenanceLogs_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "maintenance_logs_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "maintenanceLogs_services" (
+CREATE TABLE "maintenance_logs_services" (
     "id" TEXT NOT NULL,
     "maintenance_log_id" TEXT NOT NULL,
     "service_id" TEXT NOT NULL,
 
-    CONSTRAINT "maintenanceLogs_services_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "maintenance_logs_services_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "maintenanceLogs_services_parts" (
+CREATE TABLE "maintenance_logs_services_parts" (
     "id" TEXT NOT NULL,
     "maintenance_log_service_id" TEXT NOT NULL,
     "part_id" TEXT NOT NULL,
 
-    CONSTRAINT "maintenanceLogs_services_parts_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "maintenance_logs_services_parts_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "serviceShops" (
+CREATE TABLE "service_shops" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
@@ -86,7 +86,7 @@ CREATE TABLE "serviceShops" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "serviceShops_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "service_shops_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -98,7 +98,7 @@ CREATE TABLE "parts" (
     "oem_part_number" TEXT,
     "lifespan_lower_bound" INTEGER,
     "lifespan_upper_bound" INTEGER,
-    "lifespan_unit" "distanceUnit",
+    "lifespan_distance_unit" "distance_unit",
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -128,11 +128,11 @@ CREATE TABLE "services" (
 CREATE TABLE "vehicles_services" (
     "vehicle_id" TEXT NOT NULL,
     "service_id" TEXT NOT NULL,
-    "repeat_type" "vehicleServiceRepeatType",
+    "repeat_type" "vehicle_service_repeat_type",
     "repeat_interval_lower_bound" INTEGER,
     "repeat_interval_upper_bound" INTEGER,
-    "repeat_interval_distance_unit" "distanceUnit",
-    "repeat_interval_time_unit" "timeUnit",
+    "repeat_interval_distance_unit" "distance_unit",
+    "repeat_interval_time_unit" "time_unit",
 
     CONSTRAINT "vehicles_services_pkey" PRIMARY KEY ("vehicle_id","service_id")
 );
@@ -141,28 +141,28 @@ CREATE TABLE "vehicles_services" (
 CREATE INDEX "vehicles_user_id_idx" ON "vehicles"("user_id");
 
 -- CreateIndex
-CREATE INDEX "maintenanceLogs_user_id_vehicle_id_idx" ON "maintenanceLogs"("user_id", "vehicle_id");
+CREATE INDEX "maintenance_logs_user_id_vehicle_id_idx" ON "maintenance_logs"("user_id", "vehicle_id");
 
 -- AddForeignKey
-ALTER TABLE "vehicleAttributes" ADD CONSTRAINT "vehicleAttributes_vehicle_id_fkey" FOREIGN KEY ("vehicle_id") REFERENCES "vehicles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "vehicle_attributes" ADD CONSTRAINT "vehicle_attributes_vehicle_id_fkey" FOREIGN KEY ("vehicle_id") REFERENCES "vehicles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "maintenanceLogs" ADD CONSTRAINT "maintenanceLogs_vehicle_id_fkey" FOREIGN KEY ("vehicle_id") REFERENCES "vehicles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "maintenance_logs" ADD CONSTRAINT "maintenance_logs_vehicle_id_fkey" FOREIGN KEY ("vehicle_id") REFERENCES "vehicles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "maintenanceLogs" ADD CONSTRAINT "maintenanceLogs_serviced_by_shop_id_fkey" FOREIGN KEY ("serviced_by_shop_id") REFERENCES "serviceShops"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "maintenance_logs" ADD CONSTRAINT "maintenance_logs_serviced_by_shop_id_fkey" FOREIGN KEY ("serviced_by_shop_id") REFERENCES "service_shops"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "maintenanceLogs_services" ADD CONSTRAINT "maintenanceLogs_services_maintenance_log_id_fkey" FOREIGN KEY ("maintenance_log_id") REFERENCES "maintenanceLogs"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "maintenance_logs_services" ADD CONSTRAINT "maintenance_logs_services_maintenance_log_id_fkey" FOREIGN KEY ("maintenance_log_id") REFERENCES "maintenance_logs"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "maintenanceLogs_services" ADD CONSTRAINT "maintenanceLogs_services_service_id_fkey" FOREIGN KEY ("service_id") REFERENCES "services"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "maintenance_logs_services" ADD CONSTRAINT "maintenance_logs_services_service_id_fkey" FOREIGN KEY ("service_id") REFERENCES "services"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "maintenanceLogs_services_parts" ADD CONSTRAINT "maintenanceLogs_services_parts_maintenance_log_service_id_fkey" FOREIGN KEY ("maintenance_log_service_id") REFERENCES "maintenanceLogs_services"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "maintenance_logs_services_parts" ADD CONSTRAINT "maintenance_logs_services_parts_maintenance_log_service_id_fkey" FOREIGN KEY ("maintenance_log_service_id") REFERENCES "maintenance_logs_services"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "maintenanceLogs_services_parts" ADD CONSTRAINT "maintenanceLogs_services_parts_part_id_fkey" FOREIGN KEY ("part_id") REFERENCES "parts"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "maintenance_logs_services_parts" ADD CONSTRAINT "maintenance_logs_services_parts_part_id_fkey" FOREIGN KEY ("part_id") REFERENCES "parts"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "vehicles_parts" ADD CONSTRAINT "vehicles_parts_vehicle_id_fkey" FOREIGN KEY ("vehicle_id") REFERENCES "vehicles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
