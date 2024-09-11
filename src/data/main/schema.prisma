@@ -139,7 +139,8 @@ model ServiceShop {
 model Part {
   id String @id @default(cuid())
 
-  vehicleParts VehiclePart[]
+  vehicleParts               VehiclePart[]
+  maintenanceLogServiceParts MaintenanceLogServicePart[]
 
   name                   String        @map("name")
   description            String?       @map("description")
@@ -149,9 +150,8 @@ model Part {
   lifespanUpperBound     Int?          @map("lifespan_upper_bound")
   lifespanDistanceUnit   DistanceUnit? @map("lifespan_distance_unit")
 
-  createdAt                 DateTime                    @default(now()) @map("created_at")
-  updatedAt                 DateTime                    @updatedAt @map("updated_at")
-  MaintenanceLogServicePart MaintenanceLogServicePart[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("parts")
 }

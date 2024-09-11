@@ -112,10 +112,7 @@ export type webhooks = Record<string, never>;
 export interface components {
 	schemas: {
 		Vehicle: {
-			/**
-			 * Format: uuid
-			 * @description The unique identifier for the vehicle
-			 */
+			/** @description The unique identifier for the vehicle */
 			id: string;
 			/** @description The unique identifier for the user who owns this vehicle */
 			userId: string;

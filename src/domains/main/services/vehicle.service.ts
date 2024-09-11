@@ -1,7 +1,7 @@
 import { DistanceUnit } from '@prisma/client';
 import { IVehicleRepository, VehicleWithAttributes } from 'src/data/main/repositories';
 
-export type Vehicle = {
+export type VehicleDto = {
 	id: string;
 	userId: string;
 	make: string;
@@ -14,10 +14,10 @@ export type Vehicle = {
 	mileageDistanceUnit: 'KM' | 'MI';
 	createdAt: Date;
 	updatedAt: Date;
-	attributes?: VehicleAttribute[];
+	attributes?: VehicleAttributeDto[];
 };
 
-export type CreateVehicle = {
+export type CreateVehicleDto = {
 	userId: string;
 	make: string;
 	model: string;
@@ -27,30 +27,30 @@ export type CreateVehicle = {
 	color?: string | null;
 	mileage: number;
 	mileageDistanceUnit: DistanceUnit;
-	attributes?: VehicleAttribute[];
+	attributes?: VehicleAttributeDto[];
 };
 
-export type VehicleAttribute = {
+export type VehicleAttributeDto = {
 	code: string;
 	name: string;
 	value: string;
 };
 
 export interface IVehicleService {
-	getVehiclesByUserId(userId: string): Promise<Vehicle[]>;
-	createVehicle(vehicle: CreateVehicle): Promise<Vehicle>;
+	getVehiclesByUserId(userId: string): Promise<VehicleDto[]>;
+	createVehicle(vehicle: CreateVehicleDto): Promise<VehicleDto>;
 }
 
 export class VehicleService implements IVehicleService {
 	constructor(readonly vehicleRepository: IVehicleRepository) {}
 
-	async getVehiclesByUserId(userId: string): Promise<Vehicle[]> {
+	async getVehiclesByUserId(userId: string): Promise<VehicleDto[]> {
 		const vehicles = await this.vehicleRepository.getVehiclesByUserId(userId);
 
 		return vehicles.map(this.#toVehicle);
 	}
 
-	async createVehicle(vehicle: CreateVehicle): Promise<Vehicle> {
+	async createVehicle(vehicle: CreateVehicleDto): Promise<VehicleDto> {
 		const createdVehicle = await this.vehicleRepository.createVehicle({
 			...vehicle,
 			vehicleAttributes: {
@@ -61,19 +61,11 @@ export class VehicleService implements IVehicleService {
 		return this.#toVehicle(createdVehicle);
 	}
 
-	#toVehicle(vehicleWithAttributes: VehicleWithAttributes): Vehicle {
+	#toVehicle(vehicleWithAttributes: VehicleWithAttributes): VehicleDto {
+		const { vehicleAttributes: _, ...vehicle } = vehicleWithAttributes;
+
 		return {
-			id: vehicleWithAttributes.id,
-			make: vehicleWithAttributes.make,
-			model: vehicleWithAttributes.model,
-			year: vehicleWithAttributes.year,
-			vin: vehicleWithAttributes.vin,
-			plate: vehicleWithAttributes.plate,
-			color: vehicleWithAttributes.color,
-			createdAt: vehicleWithAttributes.createdAt,
-			updatedAt: vehicleWithAttributes.updatedAt,
-			userId: vehicleWithAttributes.userId,
-			mileage: vehicleWithAttributes.mileage,
+			...vehicle,
 			mileageDistanceUnit: vehicleWithAttributes.mileageDistanceUnit as DistanceUnit,
 			attributes: vehicleWithAttributes.vehicleAttributes.map((attribute) => ({
 				code: attribute.code,

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { components } from 'src/api/types/openapi';
-import { getRequiredUserId } from 'src/api/util/helpers';
-import { IVehicleService } from 'src/domains/main/services/vehicle.service';
+import { getRequiredUserId } from 'src/api/util';
+import { IVehicleService, VehicleDto } from 'src/domains/main/services/vehicle.service';
 
 export type Vehicle = components['schemas']['Vehicle'];
 export type VehicleCreateRequestBody = Request<never, never, components['schemas']['VehicleCreateRequestBody']>;
@@ -17,14 +17,8 @@ export class VehiclesController implements IVehiclesController {
 	async getVehicles(req: Request, res: Response<Vehicle[]>): Promise<void> {
 		const userId = getRequiredUserId(req);
 		const vehicles = await this.vehicleService.getVehiclesByUserId(userId);
-
-		res.json(
-			vehicles.map((vehicle) => ({
-				...vehicle,
-				createdAt: vehicle.createdAt.toISOString(),
-				updatedAt: vehicle.updatedAt.toISOString(),
-			}))
-		);
+		const responseBody = vehicles.map(this.#toVehicle);
+		res.json(responseBody);
 	}
 
 	async createVehicle(req: VehicleCreateRequestBody, res: Response<Vehicle>): Promise<void> {
@@ -34,10 +28,14 @@ export class VehiclesController implements IVehiclesController {
 			userId,
 		});
 
-		res.json({
-			...vehicle,
-			createdAt: vehicle.createdAt.toISOString(),
-			updatedAt: vehicle.updatedAt.toISOString(),
-		});
+		res.json(this.#toVehicle(vehicle));
+	}
+
+	#toVehicle(vehicleDto: VehicleDto): Vehicle {
+		return {
+			...vehicleDto,
+			createdAt: vehicleDto.createdAt.toISOString(),
+			updatedAt: vehicleDto.updatedAt.toISOString(),
+		};
 	}
 }

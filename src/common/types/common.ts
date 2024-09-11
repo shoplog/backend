@@ -9,3 +9,5 @@ export const StringAsBoolean = (options?: StringOptions) =>
 	Type.Transform(Type.String(options))
 		.Decode((value) => value?.toLowerCase() === 'true')
 		.Encode((value) => value.toString());
+
+export type Exact<A, B> = A extends B ? (B extends A ? A : never) : never;
