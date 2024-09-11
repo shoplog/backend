@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { DistanceUnit, PrismaClient, VehicleServiceRepeatType } from '@prisma/client';
 import { logger } from 'src/common/initializers/logger';
 
 const prisma = new PrismaClient();
@@ -68,6 +68,37 @@ const main = async () => {
 						{ code: 'EngineHP_to', name: 'Engine Brake (hp) To', value: '190' },
 						{ code: 'EngineManufacturer', name: 'Engine Manufacturer', value: 'Toyota' },
 					],
+				},
+			},
+		},
+	});
+
+	const serviceId = '7BA8F66A-AB3D-4CA7-959F-D1BFC383E80C';
+
+	await prisma.service.upsert({
+		where: {
+			id: serviceId,
+		},
+		update: {},
+		create: {
+			id: serviceId,
+			name: 'Oil Change',
+			description: 'Change engine oil and filter',
+			vehicleServices: {
+				connectOrCreate: {
+					where: {
+						vehicleId_serviceId: {
+							vehicleId,
+							serviceId,
+						},
+					},
+					create: {
+						vehicleId,
+						repeatIntervalDistanceUnit: DistanceUnit.KM,
+						repeatIntervalLowerBound: 5000,
+						repeatIntervalUpperBound: 5000,
+						repeatType: VehicleServiceRepeatType.MILEAGE,
+					},
 				},
 			},
 		},

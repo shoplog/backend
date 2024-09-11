@@ -83,7 +83,7 @@ model MaintenanceLog {
 
   serviceDate DateTime @map("service_date")
   mileage     Int      @map("mileage")
-  notes       String   @map("description")
+  notes       String   @map("notes")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -167,7 +167,8 @@ model VehiclePart {
 }
 
 model Service {
-  id String @id @default(cuid())
+  id     String  @id @default(cuid())
+  userId String? @map("user_id")
 
   vehicleServices        VehicleService[]
   maintenanceLogServices MaintenanceLogService[]
@@ -178,6 +179,7 @@ model Service {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@index([userId])
   @@map("services")
 }
 

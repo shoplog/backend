@@ -62,12 +62,12 @@ export class VehicleService implements IVehicleService {
 	}
 
 	#toVehicle(vehicleWithAttributes: VehicleWithAttributes): VehicleDto {
-		const { vehicleAttributes: _, ...vehicle } = vehicleWithAttributes;
+		const { vehicleAttributes, ...vehicle } = vehicleWithAttributes;
 
 		return {
 			...vehicle,
-			mileageDistanceUnit: vehicleWithAttributes.mileageDistanceUnit as DistanceUnit,
-			attributes: vehicleWithAttributes.vehicleAttributes.map((attribute) => ({
+			mileageDistanceUnit: vehicle.mileageDistanceUnit as DistanceUnit,
+			attributes: vehicleAttributes.map((attribute) => ({
 				code: attribute.code,
 				name: attribute.name,
 				value: attribute.value,

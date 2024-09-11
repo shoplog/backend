@@ -46,7 +46,7 @@ CREATE TABLE "maintenance_logs" (
     "serviced_by_shop_id" TEXT,
     "service_date" TIMESTAMP(3) NOT NULL,
     "mileage" INTEGER NOT NULL,
-    "description" TEXT NOT NULL,
+    "notes" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -116,6 +116,7 @@ CREATE TABLE "vehicles_parts" (
 -- CreateTable
 CREATE TABLE "services" (
     "id" TEXT NOT NULL,
+    "user_id" TEXT,
     "name" TEXT NOT NULL,
     "description" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -142,6 +143,9 @@ CREATE INDEX "vehicles_user_id_idx" ON "vehicles"("user_id");
 
 -- CreateIndex
 CREATE INDEX "maintenance_logs_user_id_vehicle_id_idx" ON "maintenance_logs"("user_id", "vehicle_id");
+
+-- CreateIndex
+CREATE INDEX "services_user_id_idx" ON "services"("user_id");
 
 -- AddForeignKey
 ALTER TABLE "vehicle_attributes" ADD CONSTRAINT "vehicle_attributes_vehicle_id_fkey" FOREIGN KEY ("vehicle_id") REFERENCES "vehicles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
