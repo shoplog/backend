@@ -1,7 +1,9 @@
+import { ServicesController } from 'src/api/controllers/services.controller';
 import { VehiclesController } from 'src/api/controllers/vehicles.controller';
 import { VPICController } from 'src/api/controllers/vpic.controller';
 import { MainDatabase } from 'src/data/main/database';
 import { VehicleRepository } from 'src/data/main/repositories';
+import { ServiceRepository } from 'src/data/main/repositories/service.repository';
 import { VPICDatabase } from 'src/data/vpic/database';
 import {
 	LookupRepository,
@@ -10,6 +12,7 @@ import {
 	VinRepository,
 	YearRepository,
 } from 'src/data/vpic/repositories';
+import { ServiceService } from 'src/domains/main/services/service.service';
 import { VehicleService } from 'src/domains/main/services/vehicle.service';
 import { VPICService } from 'src/domains/vpic/services/vpic.service';
 
@@ -22,6 +25,10 @@ export const loadDependencies = (vpicDatabase: VPICDatabase, mainDatabase: MainD
 	const vpicService = new VPICService(vinRepository, yearRepository, makeRepository, modelRepository, lookupRepository);
 	const vpicController = new VPICController(vpicService);
 
+	const servicesRepository = new ServiceRepository(mainDatabase);
+	const servicesService = new ServiceService(servicesRepository);
+	const servicesController = new ServicesController(servicesService);
+
 	const vehicleRepository = new VehicleRepository(mainDatabase);
 	const vehicleService = new VehicleService(vehicleRepository);
 	const vehiclesController = new VehiclesController(vehicleService);
@@ -30,6 +37,7 @@ export const loadDependencies = (vpicDatabase: VPICDatabase, mainDatabase: MainD
 		controllers: {
 			vpicController,
 			vehiclesController,
+			servicesController,
 		},
 	};
 };

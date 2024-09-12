@@ -107,10 +107,47 @@ export interface paths {
 		patch?: never;
 		trace?: never;
 	};
+	'/services': {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		/** Get a list of services */
+		get: operations['getServices'];
+		put?: never;
+		post?: never;
+		delete?: never;
+		options?: never;
+		head?: never;
+		patch?: never;
+		trace?: never;
+	};
 }
 export type webhooks = Record<string, never>;
 export interface components {
 	schemas: {
+		Service: {
+			/** @description The unique identifier for the service */
+			id: string;
+			/** @description The unique identifier for the user who owns this service */
+			userId?: string | null;
+			/** @description The name of the service */
+			name: string;
+			/** @description The description of the service */
+			description?: string | null;
+			/**
+			 * Format: date-time
+			 * @description The date and time the service was created
+			 */
+			createdAt: string;
+			/**
+			 * Format: date-time
+			 * @description The date and time the service was last updated
+			 */
+			updatedAt: string;
+		};
 		Vehicle: {
 			/** @description The unique identifier for the vehicle */
 			id: string;
@@ -623,6 +660,30 @@ export interface operations {
 			403: components['responses']['403'];
 			404: components['responses']['404'];
 			422: components['responses']['422'];
+			500: components['responses']['500'];
+		};
+	};
+	getServices: {
+		parameters: {
+			query?: never;
+			header?: never;
+			path?: never;
+			cookie?: never;
+		};
+		requestBody?: never;
+		responses: {
+			/** @description Services found */
+			200: {
+				headers: {
+					[name: string]: unknown;
+				};
+				content: {
+					'application/json': components['schemas']['Service'][];
+				};
+			};
+			401: components['responses']['401'];
+			403: components['responses']['403'];
+			404: components['responses']['404'];
 			500: components['responses']['500'];
 		};
 	};
