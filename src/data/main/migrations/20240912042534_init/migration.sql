@@ -46,7 +46,7 @@ CREATE TABLE "maintenance_logs" (
     "serviced_by_shop_id" TEXT,
     "service_date" TIMESTAMP(3) NOT NULL,
     "mileage" INTEGER NOT NULL,
-    "notes" TEXT NOT NULL,
+    "notes" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 

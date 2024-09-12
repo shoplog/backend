@@ -8,8 +8,8 @@ export type CreateMaintenanceLogDto = {
 	vehicleId: string;
 	serviceDate: Date;
 	mileage: number;
-	notes: string;
-	serviceIds: string[];
+	notes?: string | null;
+	serviceIds?: string[] | null;
 };
 
 export type MaintenanceLogWithServicesDto = {
@@ -18,7 +18,7 @@ export type MaintenanceLogWithServicesDto = {
 	vehicleId: string;
 	serviceDate: Date;
 	mileage: number;
-	notes: string;
+	notes?: string | null;
 	createdAt: Date;
 	updatedAt: Date;
 	serviceIds: string[];
@@ -45,15 +45,18 @@ export class MaintenanceLogService implements IMaintenanceLogService {
 	}
 
 	async createMaintenanceLog(maintenanceLog: CreateMaintenanceLogDto): Promise<MaintenanceLogWithServicesDto> {
-		const { serviceIds, ...data } = maintenanceLog;
+		const { serviceIds, userId, mileage, serviceDate, notes, vehicleId } = maintenanceLog;
 		const newMaintenanceLog = await this.maintenanceLogRepository.createMaintenanceLog({
-			...data,
+			userId,
+			mileage,
+			serviceDate,
+			notes,
 			vehicle: {
-				connect: { id: maintenanceLog.vehicleId },
+				connect: { id: vehicleId },
 			},
 			maintenanceLogServices: {
 				createMany: {
-					data: serviceIds.map((serviceId) => ({ serviceId })),
+					data: serviceIds?.map((serviceId) => ({ serviceId })) ?? [],
 				},
 			},
 		});

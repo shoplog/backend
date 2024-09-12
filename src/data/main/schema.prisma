@@ -83,7 +83,7 @@ model MaintenanceLog {
 
   serviceDate DateTime @map("service_date")
   mileage     Int      @map("mileage")
-  notes       String   @map("notes")
+  notes       String?  @map("notes")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

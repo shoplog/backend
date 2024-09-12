@@ -224,6 +224,75 @@ paths:
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
+  /maintenance-logs/{vehicleId}:
+    get:
+      summary: Get a list of maintenance logs
+      operationId: getMaintenanceLogs
+      tags: ['Maintenance Logs']
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: vehicleId
+          in: path
+          description: Vehicle ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Maintenance logs found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MaintenanceLog'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      summary: Create a new maintenance log
+      operationId: createMaintenanceLog
+      tags: ['Maintenance Logs']
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: vehicleId
+          in: path
+          description: Vehicle ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMaintenanceLog'
+      responses:
+        '200':
+          description: Maintenance log created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MaintenanceLog'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/500'
 components:
   securitySchemes:
     bearerAuth:
@@ -306,6 +375,80 @@ components:
             $ref: '#/components/schemas/Problem'
       description: Request was not processed due to an internal server error
   schemas:
+    MaintenanceLog:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the maintenance log
+        userId:
+          type: string
+          description: The unique identifier for the user who owns this maintenance log
+        vehicleId:
+          type: string
+          description: The unique identifier for the vehicle associated with this maintenance log
+        serviceDate:
+          type: string
+          format: date-time
+          description: The unique identifier for the service associated with this maintenance log
+        notes:
+          type: string
+          description: The notes of the maintenance log
+          nullable: true
+        mileage:
+          type: integer
+          format: int32
+          description: The mileage of the vehicle when the maintenance log was created
+        createdAt:
+          type: string
+          format: date-time
+          description: The date and time the maintenance log was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: The date and time the maintenance log was last updated
+        serviceIds:
+          type: array
+          description: The unique identifiers for the services associated with this maintenance log
+          items:
+            type: string
+        serviceShopId:
+          type: string
+          description: The unique identifier for the service shop associated with this maintenance log
+          nullable: true
+      required:
+        - id
+        - userId
+        - vehicleId
+        - serviceDate
+        - mileage
+        - createdAt
+        - updatedAt
+    CreateMaintenanceLog:
+      type: object
+      additionalProperties: false
+      properties:
+        serviceDate:
+          type: string
+          format: date-time
+          description: The unique identifier for the service associated with this maintenance log
+        notes:
+          type: string
+          description: The notes of the maintenance log
+          nullable: true
+        mileage:
+          type: integer
+          format: int32
+          description: The mileage of the vehicle when the maintenance log was created
+        serviceIds:
+          type: array
+          description: The unique identifiers for the services associated with this maintenance log
+          items:
+            type: string
+      required:
+        - serviceDate
+        - mileage
     Service:
       type: object
       additionalProperties: false
