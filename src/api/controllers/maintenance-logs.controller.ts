@@ -2,10 +2,12 @@ import { Request, Response } from 'express';
 import { DateTime } from 'luxon';
 import { components, paths } from 'src/api/types/openapi';
 import { getRequiredUserId } from 'src/api/util';
+import { ResourceNotFoundError } from 'src/domains/common/errors/resource-not-found.error';
 import {
 	IMaintenanceLogService,
 	MaintenanceLogWithServicesDto,
 } from 'src/domains/main/services/maintenance-log.service';
+import { IVehicleService } from 'src/domains/main/services/vehicle.service';
 
 export type GetMaintenanceLogsRequest = Request<paths['/maintenance-logs/{vehicleId}']['get']['parameters']['path']>;
 export type MaintenanceLogResponseBody = components['schemas']['MaintenanceLog'];
@@ -24,7 +26,10 @@ export interface IMaintenanceLogsController {
 }
 
 export class MaintenanceLogsController implements IMaintenanceLogsController {
-	constructor(readonly maintenanceLogService: IMaintenanceLogService) {}
+	constructor(
+		readonly maintenanceLogService: IMaintenanceLogService,
+		readonly vehicleService: IVehicleService
+	) {}
 
 	async getMaintenanceLogsByVehicleId(
 		req: GetMaintenanceLogsRequest,
@@ -32,6 +37,13 @@ export class MaintenanceLogsController implements IMaintenanceLogsController {
 	): Promise<void> {
 		const userId = getRequiredUserId(req);
 		const { vehicleId } = req.params;
+
+		const vehicle = await this.vehicleService.getVehicleById(vehicleId);
+
+		if (!vehicle) {
+			throw new ResourceNotFoundError('Vehicle', { vehicleId });
+		}
+
 		const maintenanceLogs = await this.maintenanceLogService.getMaintenanceLogsByUserIdAndVehicleId(userId, vehicleId);
 
 		res.json(maintenanceLogs.map(this.#toMaintenanceLog));
@@ -43,6 +55,13 @@ export class MaintenanceLogsController implements IMaintenanceLogsController {
 	): Promise<void> {
 		const userId = getRequiredUserId(req);
 		const { vehicleId } = req.params;
+
+		const vehicle = await this.vehicleService.getVehicleById(vehicleId);
+
+		if (!vehicle) {
+			throw new ResourceNotFoundError('Vehicle', { vehicleId });
+		}
+
 		const maintenanceLog = await this.maintenanceLogService.createMaintenanceLog({
 			...req.body,
 			userId,

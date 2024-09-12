@@ -29,15 +29,15 @@ export const loadDependencies = (vpicDatabase: VPICDatabase, mainDatabase: MainD
 	const vpicController = new VPICController(vpicService);
 
 	const maintenanceLogRepository = new MaintenanceLogRepository(mainDatabase);
-	const maintenanceLogService = new MaintenanceLogService(maintenanceLogRepository);
-	const maintenancesLogController = new MaintenanceLogsController(maintenanceLogService);
-
 	const servicesRepository = new ServiceRepository(mainDatabase);
-	const servicesService = new ServiceService(servicesRepository);
-	const servicesController = new ServicesController(servicesService);
-
 	const vehicleRepository = new VehicleRepository(mainDatabase);
+
+	const maintenanceLogService = new MaintenanceLogService(maintenanceLogRepository);
+	const servicesService = new ServiceService(servicesRepository);
 	const vehicleService = new VehicleService(vehicleRepository);
+
+	const servicesController = new ServicesController(servicesService);
+	const maintenancesLogController = new MaintenanceLogsController(maintenanceLogService, vehicleService);
 	const vehiclesController = new VehiclesController(vehicleService);
 
 	return {

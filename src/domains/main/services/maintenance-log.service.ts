@@ -1,3 +1,4 @@
+import { IVehicleRepository } from 'src/data/main/repositories';
 import {
 	IMaintenanceLogRepository,
 	MaintenanceLogWithServices,

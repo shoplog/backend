@@ -1,4 +1,4 @@
-import { DistanceUnit } from '@prisma/client';
+import { DistanceUnit, Vehicle } from '@prisma/client';
 import { IVehicleRepository, VehicleWithAttributes } from 'src/data/main/repositories';
 
 export type VehicleDto = {
@@ -14,8 +14,11 @@ export type VehicleDto = {
 	mileageDistanceUnit: 'KM' | 'MI';
 	createdAt: Date;
 	updatedAt: Date;
-	attributes?: VehicleAttributeDto[];
 };
+
+export type VehicleWithAttributesDto = {
+	attributes?: VehicleAttributeDto[];
+} & VehicleDto;
 
 export type CreateVehicleDto = {
 	userId: string;
@@ -37,20 +40,27 @@ export type VehicleAttributeDto = {
 };
 
 export interface IVehicleService {
-	getVehiclesByUserId(userId: string): Promise<VehicleDto[]>;
-	createVehicle(vehicle: CreateVehicleDto): Promise<VehicleDto>;
+	getVehicleById(vehicleId: string): Promise<VehicleDto | null>;
+	getVehiclesByUserId(userId: string): Promise<VehicleWithAttributesDto[]>;
+	createVehicle(vehicle: CreateVehicleDto): Promise<VehicleWithAttributesDto>;
 }
 
 export class VehicleService implements IVehicleService {
 	constructor(readonly vehicleRepository: IVehicleRepository) {}
 
-	async getVehiclesByUserId(userId: string): Promise<VehicleDto[]> {
-		const vehicles = await this.vehicleRepository.getVehiclesByUserId(userId);
+	async getVehicleById(vehicleId: string): Promise<VehicleDto | null> {
+		const vehicle = await this.vehicleRepository.getVehicleById(vehicleId);
 
-		return vehicles.map(this.#toVehicle);
+		return vehicle ? this.#toVehicleDto(vehicle) : null;
 	}
 
-	async createVehicle(vehicle: CreateVehicleDto): Promise<VehicleDto> {
+	async getVehiclesByUserId(userId: string): Promise<VehicleWithAttributesDto[]> {
+		const vehicles = await this.vehicleRepository.getVehiclesByUserId(userId);
+
+		return vehicles.map(this.#toVehicleWithAttributesDto);
+	}
+
+	async createVehicle(vehicle: CreateVehicleDto): Promise<VehicleWithAttributesDto> {
 		const createdVehicle = await this.vehicleRepository.createVehicle({
 			...vehicle,
 			vehicleAttributes: {
@@ -58,15 +68,21 @@ export class VehicleService implements IVehicleService {
 			},
 		});
 
-		return this.#toVehicle(createdVehicle);
+		return this.#toVehicleWithAttributesDto(createdVehicle);
 	}
 
-	#toVehicle(vehicleWithAttributes: VehicleWithAttributes): VehicleDto {
-		const { vehicleAttributes, ...vehicle } = vehicleWithAttributes;
-
+	#toVehicleDto(vehicle: Vehicle): VehicleWithAttributesDto {
 		return {
 			...vehicle,
 			mileageDistanceUnit: vehicle.mileageDistanceUnit as DistanceUnit,
+		};
+	}
+
+	#toVehicleWithAttributesDto(vehicleWithAttributes: VehicleWithAttributes): VehicleWithAttributesDto {
+		const { vehicleAttributes, ...vehicle } = vehicleWithAttributes;
+
+		return {
+			...this.#toVehicleDto(vehicle),
 			attributes: vehicleAttributes.map((attribute) => ({
 				code: attribute.code,
 				name: attribute.name,

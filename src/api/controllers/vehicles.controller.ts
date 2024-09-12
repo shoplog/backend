@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { components } from 'src/api/types/openapi';
 import { getRequiredUserId } from 'src/api/util';
-import { IVehicleService, VehicleDto } from 'src/domains/main/services/vehicle.service';
+import { IVehicleService, VehicleWithAttributesDto } from 'src/domains/main/services/vehicle.service';
 
 export type Vehicle = components['schemas']['Vehicle'];
 export type VehicleCreateRequestBody = Request<never, never, components['schemas']['VehicleCreateRequestBody']>;
@@ -31,7 +31,7 @@ export class VehiclesController implements IVehiclesController {
 		res.json(this.#toVehicle(vehicle));
 	}
 
-	#toVehicle(vehicleDto: VehicleDto): Vehicle {
+	#toVehicle(vehicleDto: VehicleWithAttributesDto): Vehicle {
 		return {
 			...vehicleDto,
 			createdAt: vehicleDto.createdAt.toISOString(),
