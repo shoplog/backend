@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"scripts": {
 		"dev": "TZ=UTC NODE_ENV=development SWCRC=true nodemon --exec node -r @swc-node/register src/index.ts",
-		"test": "TZ=UTC NODE_ENV=test LOG_LEVEL=silent SWCRC=true jest --runInBand --detectOpenHandles --forceExit --coverage",
+		"test": "TZ=UTC NODE_ENV=test LOG_LEVEL=error SWCRC=true jest --runInBand --detectOpenHandles --forceExit --coverage",
 		"lint": "tsc && prettier --check . && eslint .",
 		"lint:fix": "prettier --write . && eslint . --fix",
 		"format": "prettier --check .",

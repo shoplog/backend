@@ -51,13 +51,13 @@ export class VehicleService implements IVehicleService {
 	async getVehicleById(vehicleId: string): Promise<VehicleDto | null> {
 		const vehicle = await this.vehicleRepository.getVehicleById(vehicleId);
 
-		return vehicle ? this.#toVehicleDto(vehicle) : null;
+		return vehicle ? VehicleService.toVehicleDto(vehicle) : null;
 	}
 
 	async getVehiclesByUserId(userId: string): Promise<VehicleWithAttributesDto[]> {
 		const vehicles = await this.vehicleRepository.getVehiclesByUserId(userId);
 
-		return vehicles.map(this.#toVehicleWithAttributesDto);
+		return vehicles.map(VehicleService.toVehicleWithAttributesDto);
 	}
 
 	async createVehicle(vehicle: CreateVehicleDto): Promise<VehicleWithAttributesDto> {
@@ -68,21 +68,21 @@ export class VehicleService implements IVehicleService {
 			},
 		});
 
-		return this.#toVehicleWithAttributesDto(createdVehicle);
+		return VehicleService.toVehicleWithAttributesDto(createdVehicle);
 	}
 
-	#toVehicleDto(vehicle: Vehicle): VehicleWithAttributesDto {
+	static toVehicleDto(vehicle: Vehicle): VehicleWithAttributesDto {
 		return {
 			...vehicle,
 			mileageDistanceUnit: vehicle.mileageDistanceUnit as DistanceUnit,
 		};
 	}
 
-	#toVehicleWithAttributesDto(vehicleWithAttributes: VehicleWithAttributes): VehicleWithAttributesDto {
+	static toVehicleWithAttributesDto(vehicleWithAttributes: VehicleWithAttributes): VehicleWithAttributesDto {
 		const { vehicleAttributes, ...vehicle } = vehicleWithAttributes;
-
+		const vehicleDto = VehicleService.toVehicleDto(vehicle);
 		return {
-			...this.#toVehicleDto(vehicle),
+			...vehicleDto,
 			attributes: vehicleAttributes.map((attribute) => ({
 				code: attribute.code,
 				name: attribute.name,

@@ -30,5 +30,7 @@
 		// "allowUnreachableCode": true,                     /* Disable error reporting for unreachable code. */
 		"skipLibCheck": true
 	},
-	"exclude": ["node_modules", "coverage"]
+	"exclude": ["node_modules", "coverage"],
+	"include": ["src", "tests"],
+	"files": ["global.d.ts"]
 }
