@@ -64,6 +64,7 @@ export class MaintenanceLogsController implements IMaintenanceLogsController {
 
 		const maintenanceLog = await this.maintenanceLogService.createMaintenanceLog({
 			...req.body,
+			notes: req.body.notes || null,
 			userId,
 			vehicleId,
 			serviceDate: DateTime.fromISO(req.body.serviceDate).toJSDate(),

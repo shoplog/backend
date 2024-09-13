@@ -1,8 +1,9 @@
-import { Service } from '@prisma/client';
+import { Selectable } from 'kysely';
+import { Service } from 'src/data/main/main-db';
 import { IServiceRepository } from 'src/data/main/repositories/service.repository';
 
 export type ServiceDto = {
-	id: string;
+	id: number;
 	userId: string | null;
 	name: string;
 	description: string | null;
@@ -20,12 +21,17 @@ export class ServiceService implements IServiceService {
 	async getServicesByUserId(userId: string): Promise<ServiceDto[]> {
 		const services = await this.serviceRepository.getServicesByUserId(userId, true);
 
-		return services.map(this.#toServiceDto);
+		return services.map(ServiceService.toServiceDto);
 	}
 
-	#toServiceDto(service: Service): ServiceDto {
+	static toServiceDto(service: Selectable<Service>): ServiceDto {
 		return {
-			...service,
+			id: service.id,
+			name: service.name,
+			description: service.description,
+			userId: service.user_id,
+			createdAt: service.created_at,
+			updatedAt: service.updated_at,
 		};
 	}
 }

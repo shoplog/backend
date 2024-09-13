@@ -147,12 +147,18 @@ export type webhooks = Record<string, never>;
 export interface components {
 	schemas: {
 		MaintenanceLog: {
-			/** @description The unique identifier for the maintenance log */
-			id: string;
+			/**
+			 * Format: int32
+			 * @description The unique identifier for the maintenance log
+			 */
+			id: number;
 			/** @description The unique identifier for the user who owns this maintenance log */
 			userId: string;
-			/** @description The unique identifier for the vehicle associated with this maintenance log */
-			vehicleId: string;
+			/**
+			 * Format: int32
+			 * @description The unique identifier for the vehicle associated with this maintenance log
+			 */
+			vehicleId: number;
 			/**
 			 * Format: date-time
 			 * @description The unique identifier for the service associated with this maintenance log
@@ -176,9 +182,9 @@ export interface components {
 			 */
 			updatedAt: string;
 			/** @description The unique identifiers for the services associated with this maintenance log */
-			serviceIds?: string[];
+			serviceIds?: number[];
 			/** @description The unique identifier for the service shop associated with this maintenance log */
-			serviceShopId?: string | null;
+			serviceShopId?: number | null;
 		};
 		CreateMaintenanceLog: {
 			/**
@@ -194,11 +200,14 @@ export interface components {
 			 */
 			mileage: number;
 			/** @description The unique identifiers for the services associated with this maintenance log */
-			serviceIds?: string[];
+			serviceIds?: number[];
 		};
 		Service: {
-			/** @description The unique identifier for the service */
-			id: string;
+			/**
+			 * Format: int32
+			 * @description The unique identifier for the service
+			 */
+			id: number;
 			/** @description The unique identifier for the user who owns this service */
 			userId?: string | null;
 			/** @description The name of the service */
@@ -217,8 +226,11 @@ export interface components {
 			updatedAt: string;
 		};
 		Vehicle: {
-			/** @description The unique identifier for the vehicle */
-			id: string;
+			/**
+			 * Format: int32
+			 * @description The unique identifier for the vehicle
+			 */
+			id: number;
 			/** @description The unique identifier for the user who owns this vehicle */
 			userId: string;
 			/** @description The make of the vehicle */
@@ -761,7 +773,7 @@ export interface operations {
 			header?: never;
 			path: {
 				/** @description Vehicle ID */
-				vehicleId: string;
+				vehicleId: number;
 			};
 			cookie?: never;
 		};
@@ -788,7 +800,7 @@ export interface operations {
 			header?: never;
 			path: {
 				/** @description Vehicle ID */
-				vehicleId: string;
+				vehicleId: number;
 			};
 			cookie?: never;
 		};

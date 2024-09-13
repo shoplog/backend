@@ -22,24 +22,25 @@ describe('/vehicles', () => {
 		});
 
 		afterEach(async () => {
-			tx.rollback();
+			tx?.rollback();
 		});
 
 		it('should respond with 200 Ok - vehicles found', async () => {
 			// arrange
-			await tx.transaction.vehicle.create({
-				data: {
-					userId,
+			await tx.transaction
+				.insertInto('vehicles')
+				.values({
+					user_id: userId,
 					make: 'Toyota',
 					model: 'Camry',
 					year: 2002,
 					mileage: 100000,
-					mileageDistanceUnit: 'MI',
+					mileage_distance_unit: 'MI',
 					color: 'Red',
 					plate: 'ABC123',
 					vin: '12345678901234567',
-				},
-			});
+				})
+				.execute();
 
 			// act
 			const body = await supertest(app)
@@ -52,7 +53,7 @@ describe('/vehicles', () => {
 			expect(body).toHaveLength(1);
 			expect(body).toIncludeSameMembers([
 				{
-					id: expect.any(String),
+					id: expect.any(Number),
 					userId,
 					make: 'Toyota',
 					model: 'Camry',
@@ -62,7 +63,6 @@ describe('/vehicles', () => {
 					color: 'Red',
 					plate: 'ABC123',
 					vin: '12345678901234567',
-					attributes: [],
 					createdAt: expect.toBeDateString(),
 					updatedAt: expect.toBeDateString(),
 				},

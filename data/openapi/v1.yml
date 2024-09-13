@@ -237,7 +237,8 @@ paths:
           description: Vehicle ID
           required: true
           schema:
-            type: string
+            type: integer
+            format: int32
       responses:
         '200':
           description: Maintenance logs found
@@ -267,7 +268,8 @@ paths:
           description: Vehicle ID
           required: true
           schema:
-            type: string
+            type: integer
+            format: int32
       requestBody:
         required: true
         content:
@@ -380,13 +382,15 @@ components:
       additionalProperties: false
       properties:
         id:
-          type: string
+          type: integer
+          format: int32
           description: The unique identifier for the maintenance log
         userId:
           type: string
           description: The unique identifier for the user who owns this maintenance log
         vehicleId:
-          type: string
+          type: integer
+          format: int32
           description: The unique identifier for the vehicle associated with this maintenance log
         serviceDate:
           type: string
@@ -412,9 +416,10 @@ components:
           type: array
           description: The unique identifiers for the services associated with this maintenance log
           items:
-            type: string
+            type: integer
+            format: int32
         serviceShopId:
-          type: string
+          type: integer
           description: The unique identifier for the service shop associated with this maintenance log
           nullable: true
       required:
@@ -445,7 +450,8 @@ components:
           type: array
           description: The unique identifiers for the services associated with this maintenance log
           items:
-            type: string
+            type: integer
+            format: int32
       required:
         - serviceDate
         - mileage
@@ -454,7 +460,8 @@ components:
       additionalProperties: false
       properties:
         id:
-          type: string
+          type: integer
+          format: int32
           description: The unique identifier for the service
         userId:
           type: string
@@ -485,7 +492,8 @@ components:
       additionalProperties: false
       properties:
         id:
-          type: string
+          type: integer
+          format: int32
           description: The unique identifier for the vehicle
         userId:
           type: string

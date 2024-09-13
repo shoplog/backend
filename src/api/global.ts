@@ -3,7 +3,7 @@ import { ServicesController } from 'src/api/controllers/services.controller';
 import { VehiclesController } from 'src/api/controllers/vehicles.controller';
 import { VPICController } from 'src/api/controllers/vpic.controller';
 import { MainDatabase } from 'src/data/main/database';
-import { VehicleRepository } from 'src/data/main/repositories';
+import { VehicleAttributeRepository, VehicleRepository } from 'src/data/main/repositories';
 import { MaintenanceLogRepository } from 'src/data/main/repositories/maintenance-log.repository';
 import { ServiceRepository } from 'src/data/main/repositories/service.repository';
 import { VPICDatabase } from 'src/data/vpic/database';
@@ -31,10 +31,11 @@ export const loadDependencies = (vpicDatabase: VPICDatabase, mainDatabase: MainD
 	const maintenanceLogRepository = new MaintenanceLogRepository(mainDatabase);
 	const servicesRepository = new ServiceRepository(mainDatabase);
 	const vehicleRepository = new VehicleRepository(mainDatabase);
+	const vehicleAttributeRepository = new VehicleAttributeRepository(mainDatabase);
 
 	const maintenanceLogService = new MaintenanceLogService(maintenanceLogRepository);
 	const servicesService = new ServiceService(servicesRepository);
-	const vehicleService = new VehicleService(vehicleRepository);
+	const vehicleService = new VehicleService(vehicleRepository, vehicleAttributeRepository);
 
 	const servicesController = new ServicesController(servicesService);
 	const maintenancesLogController = new MaintenanceLogsController(maintenanceLogService, vehicleService);

@@ -1,28 +1,21 @@
-import { Service } from '@prisma/client';
+import { Selectable } from 'kysely';
 import { MainDatabase } from 'src/data/main/database';
+import { Service } from 'src/data/main/main-db';
 
 export interface IServiceRepository {
-	getServicesByUserId(userId: string, includeDefaults: boolean): Promise<Service[]>;
+	getServicesByUserId(userId: string, includeDefaults: boolean): Promise<Selectable<Service>[]>;
 }
 
 export class ServiceRepository implements IServiceRepository {
 	constructor(readonly db: MainDatabase) {}
 
-	getServicesByUserId(userId: string, includeDefaults: boolean): Promise<Service[]> {
-		const OR: { userId: string | null }[] = [
-			{
-				userId,
-			},
-		];
+	getServicesByUserId(userId: string, includeDefaults: boolean): Promise<Selectable<Service>[]> {
+		const query = this.db.selectFrom('services').selectAll().where('user_id', '=', userId);
 
 		if (includeDefaults) {
-			OR.push({ userId: null });
+			query.where('user_id', '=', null);
 		}
 
-		return this.db.service.findMany({
-			where: {
-				OR,
-			},
-		});
+		return query.execute();
 	}
 }

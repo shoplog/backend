@@ -1,32 +1,31 @@
-import { IVehicleRepository } from 'src/data/main/repositories';
 import {
 	IMaintenanceLogRepository,
-	MaintenanceLogWithServices,
+	SelectableMaintenanceLogWithServices,
 } from 'src/data/main/repositories/maintenance-log.repository';
 
 export type CreateMaintenanceLogDto = {
 	userId: string;
-	vehicleId: string;
+	vehicleId: number;
 	serviceDate: Date;
 	mileage: number;
-	notes?: string | null;
-	serviceIds?: string[] | null;
+	notes: string | null;
+	serviceIds?: number[];
 };
 
 export type MaintenanceLogWithServicesDto = {
-	id: string;
+	id: number;
 	userId: string;
-	vehicleId: string;
+	vehicleId: number;
 	serviceDate: Date;
 	mileage: number;
-	notes?: string | null;
+	notes: string | null;
 	createdAt: Date;
 	updatedAt: Date;
-	serviceIds: string[];
+	serviceIds: number[];
 };
 
 export interface IMaintenanceLogService {
-	getMaintenanceLogsByUserIdAndVehicleId(userId: string, vehicleId: string): Promise<MaintenanceLogWithServicesDto[]>;
+	getMaintenanceLogsByUserIdAndVehicleId(userId: string, vehicleId: number): Promise<MaintenanceLogWithServicesDto[]>;
 	createMaintenanceLog(maintenanceLog: CreateMaintenanceLogDto): Promise<MaintenanceLogWithServicesDto>;
 }
 
@@ -35,41 +34,45 @@ export class MaintenanceLogService implements IMaintenanceLogService {
 
 	async getMaintenanceLogsByUserIdAndVehicleId(
 		userId: string,
-		vehicleId: string
+		vehicleId: number
 	): Promise<MaintenanceLogWithServicesDto[]> {
 		const maintenanceLogs = await this.maintenanceLogRepository.getMaintenanceLogsByUserIdAndVehicleId(
 			userId,
 			vehicleId
 		);
 
-		return maintenanceLogs.map(this.#toMaintenanceLogWithServicesDto);
+		return maintenanceLogs.map(MaintenanceLogService.toMaintenanceLogWithServicesDto);
 	}
 
 	async createMaintenanceLog(maintenanceLog: CreateMaintenanceLogDto): Promise<MaintenanceLogWithServicesDto> {
 		const { serviceIds, userId, mileage, serviceDate, notes, vehicleId } = maintenanceLog;
 		const newMaintenanceLog = await this.maintenanceLogRepository.createMaintenanceLog({
-			userId,
+			vehicle_id: vehicleId,
+			user_id: userId,
 			mileage,
-			serviceDate,
+			service_date: serviceDate,
 			notes,
-			vehicle: {
-				connect: { id: vehicleId },
-			},
-			maintenanceLogServices: {
-				createMany: {
-					data: serviceIds?.map((serviceId) => ({ serviceId })) ?? [],
-				},
-			},
+			serviceIds,
 		});
 
-		return this.#toMaintenanceLogWithServicesDto(newMaintenanceLog);
+		return MaintenanceLogService.toMaintenanceLogWithServicesDto(newMaintenanceLog);
 	}
 
-	#toMaintenanceLogWithServicesDto(maintenanceLog: MaintenanceLogWithServices): MaintenanceLogWithServicesDto {
-		const { maintenanceLogServices, ...log } = maintenanceLog;
+	static toMaintenanceLogWithServicesDto(
+		maintenanceLog: SelectableMaintenanceLogWithServices
+	): MaintenanceLogWithServicesDto {
+		const { services, ...log } = maintenanceLog;
+
 		return {
-			...log,
-			serviceIds: maintenanceLogServices.map((service) => service.serviceId),
+			id: log.id,
+			mileage: log.mileage,
+			notes: log.notes,
+			vehicleId: log.vehicle_id,
+			userId: log.user_id,
+			serviceDate: log.service_date,
+			serviceIds: services.map((service) => service.id),
+			createdAt: log.created_at,
+			updatedAt: log.updated_at,
 		};
 	}
 }

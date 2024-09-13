@@ -1,4 +1,3 @@
-import { PrismaClient } from '@prisma/client';
 import { MainDatabase } from 'src/data/main/database';
 
 class Deferred<T> {
@@ -37,16 +36,18 @@ export type Transaction = {
 	rollback: () => void;
 };
 
-export async function beginTransaction(db: PrismaClient): Promise<Transaction> {
+export async function beginTransaction(db: MainDatabase): Promise<Transaction> {
 	const connection = new Deferred<MainDatabase>();
 	const result = new Deferred<unknown>();
 
-	db.$transaction((txn) => {
-		connection.resolve(txn);
-		return result.promise;
-	}).catch(() => {
-		// Don't do anything here. Just swallow the exception.
-	});
+	db.transaction()
+		.execute((txn) => {
+			connection.resolve(txn);
+			return result.promise;
+		})
+		.catch(() => {
+			// Don't do anything here. Just swallow the exception.
+		});
 
 	const transaction = await connection.promise;
 

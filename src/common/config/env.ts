@@ -21,6 +21,14 @@ const schema = Type.Object({
 	LOG_PRINT_PRETTY: StringAsBoolean({ default: 'true' }),
 	AUTH0_ISSUER: Type.String({ minLength: 1 }),
 	AUTH0_AUDIENCE: Type.String({ minLength: 1 }),
+	POSTGRES_HOST: Type.String({ minLength: 1 }),
+	POSTGRES_NAME: Type.String({ minLength: 1 }),
+	POSTGRES_PORT: StringAsNumber({ minLength: 1 }),
+	POSTGRES_USER: Type.String({ minLength: 1 }),
+	POSTGRES_PASSWORD: Type.String({ minLength: 1 }),
+	POSTGRES_URL: Type.String({ minLength: 1 }),
+	POSTGRES_POOL_MIN: StringAsNumber({ minLength: 1 }),
+	POSTGRES_POOL_MAX: StringAsNumber({ minLength: 1 }),
 	SQL_SERVER_HOST: Type.String({ minLength: 1 }),
 	SQL_SERVER_DATABASE: Type.String({ minLength: 1 }),
 	SQL_SERVER_PORT: Type.String({ minLength: 1 }),
@@ -39,6 +47,18 @@ const CONFIG = {
 	auth0: {
 		issuerBaseURL: env.AUTH0_ISSUER,
 		audience: env.AUTH0_AUDIENCE,
+	},
+	postgres: {
+		host: env.POSTGRES_HOST,
+		database: env.POSTGRES_NAME,
+		port: env.POSTGRES_PORT,
+		user: env.POSTGRES_USER,
+		password: env.POSTGRES_PASSWORD,
+		url: env.POSTGRES_URL,
+		pool: {
+			min: env.POSTGRES_POOL_MIN,
+			max: env.POSTGRES_POOL_MAX,
+		},
 	},
 	mssql: {
 		host: env.SQL_SERVER_HOST,
